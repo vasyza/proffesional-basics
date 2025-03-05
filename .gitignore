@@ -1,0 +1,21 @@
+# Игнорировать файл с переменными окружения
+.env
+
+# Игнорировать директории и файлы PHP-зависимостей
+/vendor/
+composer.lock
+
+# Игнорировать временные и кэш файлы
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Игнорировать настройки IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace 

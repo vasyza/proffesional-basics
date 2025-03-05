@@ -1,0 +1,171 @@
+:root {
+    /* Основные цвета */
+    --background: #09090b;
+    --foreground: #fafafa;
+    
+    /* Нейтральные оттенки */
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    
+    /* Акцентные цвета */
+    --primary: #6366f1;
+    --primary-foreground: #f8fafc;
+    --primary-hover: #818cf8;
+    
+    /* Дополнительные цвета */
+    --secondary: #171717;
+    --secondary-foreground: #e4e4e7;
+    
+    /* Состояния и отклики */
+    --accent: #232327;
+    --accent-foreground: #d4d4d8;
+    
+    /* Рамки и тени */
+    --border: #313134;
+    --input: #313134;
+    --ring: #18181b;
+    
+    /* Для карточек */
+    --card: #18181b;
+    --card-foreground: #e4e4e7;
+    
+    /* Для обратной связи */
+    --destructive: #ef4444;
+    --destructive-foreground: #f8fafc;
+    --success: #16a34a;
+    --success-foreground: #f8fafc;
+    --warning: #f59e0b;
+    --warning-foreground: #18181b;
+    
+    /* Размеры и скругления */
+    --radius: 0.5rem;
+    --radius-sm: 0.3rem;
+    --radius-lg: 0.8rem;
+    
+    /* Тени */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Базовые стили */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 100vh;
+}
+
+/* Формы */
+input, button, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+input, textarea, select {
+    background-color: var(--secondary);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 0.8rem;
+    outline: none;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+button {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.7rem 1.25rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* Ссылки */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+}
+
+a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* Контейнеры */
+.card {
+    background-color: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+/* Утилиты */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+} 
