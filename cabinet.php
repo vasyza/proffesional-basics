@@ -14,19 +14,19 @@ $userRole = $_SESSION['user_role'];
 // Подключение к базе данных
 try {
     $pdo = getDbConnection();
-    
+
     // Получаем данные пользователя
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $user = $stmt->fetch();
-    
+
     if (!$user) {
         // Если пользователь не найден (что странно, но на всякий случай)
         session_destroy();
         header("Location: /auth/login.php");
         exit;
     }
-    
+
     // Получаем группы пользователя
     $stmt = $pdo->prepare("
         SELECT sg.id, sg.name, gm.role
@@ -36,7 +36,7 @@ try {
     ");
     $stmt->execute([$userId]);
     $user_groups = $stmt->fetchAll();
-    
+
     // Для экспертов - получаем их оценки профессий
     $expert_ratings = [];
     if ($userRole == 'expert') {
@@ -50,7 +50,7 @@ try {
         $stmt->execute([$userId]);
         $expert_ratings = $stmt->fetchAll();
     }
-    
+
     // Для консультантов - получаем их консультации
     $consultations = [];
     if ($userRole == 'consultant') {
@@ -75,7 +75,7 @@ try {
         $stmt->execute([$userId]);
         $consultations = $stmt->fetchAll();
     }
-    
+
 } catch (PDOException $e) {
     die("Ошибка при подключении к базе данных: " . $e->getMessage());
 }
@@ -90,28 +90,37 @@ include 'includes/header.php';
             <div class="card mb-4">
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto profile-img">
+                        <div style="width: 100px; height: 100px;"
+                            class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto profile-img">
                             <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                         </div>
                     </div>
                     <h3><?php echo htmlspecialchars($user['name']); ?></h3>
                     <p class="text-muted">@<?php echo htmlspecialchars($user['login']); ?></p>
-                    
+
                     <?php if ($userRole): ?>
                         <div class="mb-2">
                             <?php
-                                $roleBadge = '';
-                                switch ($userRole) {
-                                    case 'admin': $roleBadge = '<span class="badge bg-danger">Администратор</span>'; break;
-                                    case 'expert': $roleBadge = '<span class="badge bg-success">Эксперт</span>'; break;
-                                    case 'consultant': $roleBadge = '<span class="badge bg-info">Консультант</span>'; break;
-                                    default: $roleBadge = '<span class="badge bg-secondary">Пользователь</span>'; break;
-                                }
-                                echo $roleBadge;
+                            $roleBadge = '';
+                            switch ($userRole) {
+                                case 'admin':
+                                    $roleBadge = '<span class="badge bg-danger">Администратор</span>';
+                                    break;
+                                case 'expert':
+                                    $roleBadge = '<span class="badge bg-success">Эксперт</span>';
+                                    break;
+                                case 'consultant':
+                                    $roleBadge = '<span class="badge bg-info">Консультант</span>';
+                                    break;
+                                default:
+                                    $roleBadge = '<span class="badge bg-secondary">Пользователь</span>';
+                                    break;
+                            }
+                            echo $roleBadge;
                             ?>
                         </div>
                     <?php endif; ?>
-                    
+
                     <div class="mt-3">
                         <a href="/edit_profile.php" class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-edit me-1"></i> Редактировать профиль
@@ -119,7 +128,7 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
-            
+
             <?php if ($user_groups && count($user_groups) > 0): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
@@ -132,7 +141,8 @@ include 'includes/header.php';
                                     <a href="/groups.php?id=<?php echo $group['id']; ?>" class="text-decoration-none">
                                         <?php echo htmlspecialchars($group['name']); ?>
                                     </a>
-                                    <span class="badge bg-primary rounded-pill"><?php echo htmlspecialchars($group['role']); ?></span>
+                                    <span
+                                        class="badge bg-primary rounded-pill"><?php echo htmlspecialchars($group['role']); ?></span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -145,7 +155,7 @@ include 'includes/header.php';
                 </div>
             <?php endif; ?>
         </div>
-        
+
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-header bg-light">
@@ -164,14 +174,22 @@ include 'includes/header.php';
                         <div class="col-md-4 fw-bold">Роль:</div>
                         <div class="col-md-8">
                             <?php
-                                $roleText = '';
-                                switch ($userRole) {
-                                    case 'admin': $roleText = 'Администратор'; break;
-                                    case 'expert': $roleText = 'Эксперт'; break;
-                                    case 'consultant': $roleText = 'Консультант'; break;
-                                    default: $roleText = 'Пользователь'; break;
-                                }
-                                echo $roleText;
+                            $roleText = '';
+                            switch ($userRole) {
+                                case 'admin':
+                                    $roleText = 'Администратор';
+                                    break;
+                                case 'expert':
+                                    $roleText = 'Эксперт';
+                                    break;
+                                case 'consultant':
+                                    $roleText = 'Консультант';
+                                    break;
+                                default:
+                                    $roleText = 'Пользователь';
+                                    break;
+                            }
+                            echo $roleText;
                             ?>
                         </div>
                     </div>
@@ -181,7 +199,7 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
-            
+
             <?php if (count($consultations) > 0): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
@@ -208,32 +226,43 @@ include 'includes/header.php';
                                         <tr>
                                             <td><?php echo htmlspecialchars($consultation['topic']); ?></td>
                                             <td>
-                                                <?php 
-                                                    if ($userRole == 'consultant') {
-                                                        echo htmlspecialchars($consultation['user_name']);
-                                                    } else {
-                                                        echo $consultation['consultant_id'] 
-                                                            ? htmlspecialchars($consultation['consultant_name'])
-                                                            : '<span class="text-muted">Не назначен</span>';
-                                                    }
+                                                <?php
+                                                if ($userRole == 'consultant') {
+                                                    echo htmlspecialchars($consultation['user_name']);
+                                                } else {
+                                                    echo $consultation['consultant_id']
+                                                        ? htmlspecialchars($consultation['consultant_name'])
+                                                        : '<span class="text-muted">Не назначен</span>';
+                                                }
                                                 ?>
                                             </td>
                                             <td><?php echo date('d.m.Y', strtotime($consultation['created_at'])); ?></td>
                                             <td>
                                                 <?php
-                                                    $statusBadge = '';
-                                                    switch ($consultation['status']) {
-                                                        case 'pending': $statusBadge = '<span class="badge bg-warning text-dark">В ожидании</span>'; break;
-                                                        case 'accepted': $statusBadge = '<span class="badge bg-info">Принята</span>'; break;
-                                                        case 'completed': $statusBadge = '<span class="badge bg-success">Завершена</span>'; break;
-                                                        case 'cancelled': $statusBadge = '<span class="badge bg-danger">Отменена</span>'; break;
-                                                        default: $statusBadge = '<span class="badge bg-secondary">Неизвестно</span>'; break;
-                                                    }
-                                                    echo $statusBadge;
+                                                $statusBadge = '';
+                                                switch ($consultation['status']) {
+                                                    case 'pending':
+                                                        $statusBadge = '<span class="badge bg-warning text-dark">В ожидании</span>';
+                                                        break;
+                                                    case 'accepted':
+                                                        $statusBadge = '<span class="badge bg-info">Принята</span>';
+                                                        break;
+                                                    case 'completed':
+                                                        $statusBadge = '<span class="badge bg-success">Завершена</span>';
+                                                        break;
+                                                    case 'cancelled':
+                                                        $statusBadge = '<span class="badge bg-danger">Отменена</span>';
+                                                        break;
+                                                    default:
+                                                        $statusBadge = '<span class="badge bg-secondary">Неизвестно</span>';
+                                                        break;
+                                                }
+                                                echo $statusBadge;
                                                 ?>
                                             </td>
                                             <td>
-                                                <a href="/consultation.php?id=<?php echo $consultation['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                                <a href="/consultation.php?id=<?php echo $consultation['id']; ?>"
+                                                    class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
@@ -252,7 +281,7 @@ include 'includes/header.php';
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
-            
+
             <?php if ($userRole == 'expert' && count($expert_ratings) > 0): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
@@ -286,7 +315,8 @@ include 'includes/header.php';
                                             </td>
                                             <td><?php echo date('d.m.Y', strtotime($rating['created_at'])); ?></td>
                                             <td>
-                                                <a href="/professions.php?id=<?php echo $rating['profession_id']; ?>" class="btn btn-sm btn-outline-primary">
+                                                <a href="/professions.php?id=<?php echo $rating['profession_id']; ?>"
+                                                    class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
@@ -298,7 +328,7 @@ include 'includes/header.php';
                     </div>
                 </div>
             <?php endif; ?>
-            
+
             <?php if ($userRole == 'admin'): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
@@ -341,4 +371,4 @@ include 'includes/header.php';
 <?php
 // Подключение подвала
 include 'includes/footer.php';
-?> 
+?>
