@@ -56,63 +56,62 @@ if ($password !== $password_confirm) {
 
 try {
     $pdo = getDbConnection();
-    
+
     // Начинаем транзакцию
     $pdo->beginTransaction();
-    
+
     // Проверка уникальности логина
     $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM users WHERE login = :login");
     $stmt->execute([':login' => $login]);
-    
+
     if ($stmt->fetch(PDO::FETCH_ASSOC)['count'] > 0) {
         header('Location: /auth/register.php?error=' . urlencode("Пользователь с таким логином уже существует"));
         exit;
     }
-    
-    // Хеширование пароля (в реальном проекте лучше использовать password_hash)
-    $hashed_password = md5($password);
-    
+
+    $hashed_password = md5($password . "hiferhifurie");
+
     // Определение роли пользователя (по умолчанию - обычный пользователь)
     $role = 'user';
-    
+
     // Добавление пользователя в базу данных
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, login, pass, role, created_at, status)
-        VALUES (:name, :login, :pass, :role, NOW(), 'active')
+        INSERT INTO users (name, login, pass, role, created_at)
+        VALUES (:name, :login, :pass, :role, NOW())
     ");
-    
+
     $stmt->execute([
         ':name' => $name,
         ':login' => $login,
         ':pass' => $hashed_password,
         ':role' => $role
     ]);
-    
+
     // Получение ID нового пользователя
     $userId = $pdo->lastInsertId();
-    
+
     // Фиксируем транзакцию
     $pdo->commit();
-    
+
     // Авторизуем пользователя
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_name'] = $name;
     $_SESSION['user_login'] = $login;
     $_SESSION['user_role'] = $role;
-    
+
     // Перенаправляем на страницу личного кабинета
     header('Location: /cabinet.php?success=' . urlencode("Регистрация успешно завершена!"));
     exit;
-    
+
 } catch (PDOException $e) {
     // Отменяем транзакцию в случае ошибки
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    
+
     // Логирование ошибки
     error_log("Ошибка при регистрации пользователя: " . $e->getMessage());
-    
+
     // Перенаправляем пользователя с сообщением об ошибке
     header('Location: /auth/register.php?error=' . urlencode("Ошибка при регистрации: " . $e->getMessage()));
     exit;
