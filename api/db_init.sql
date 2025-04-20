@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS professions (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
+    type VARCHAR(50) DEFAULT 'Не указана' NOT NULL;
     description TEXT NOT NULL,
     skills TEXT NOT NULL,
     salary_range VARCHAR(100),

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS test_invitations (
     created_at TIMESTAMP NOT NULL,
     expires_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE SET NULL,
+    FOREIGN KEY (group_id) REFERENCES student_groups(id) ON DELETE SET NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
