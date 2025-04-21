@@ -8,12 +8,16 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портал ИТ-профессий</title>
+    <title><?php echo isset($pageTitle) ? $pageTitle : 'Портал ИТ-профессий'; ?></title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/progress-bar.css">
+    <!-- Custom JavaScript -->
+    <script src="/js/test-progress.js"></script>
     <style>
         body {
             min-height: 100vh;

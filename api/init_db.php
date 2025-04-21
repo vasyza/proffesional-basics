@@ -121,7 +121,7 @@ try {
     // Добавление администратора для тестирования
     $adminLogin = 'admin';
     $adminName = 'Администратор';
-    $adminPass = password_hash('admin123', PASSWORD_DEFAULT);
+    $adminPass = md5('admin123' . "hiferhifurie");;
     $adminRole = 'admin';
     
     $sql = "INSERT INTO users (login, name, pass, role) 
