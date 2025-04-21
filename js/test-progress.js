@@ -140,8 +140,12 @@ class TestProgress {
                 });
                 
                 // Update progress bar
-                const progress = (activeStepIndex / (steps.length - 1)) * 100;
-                progressBar.style.width = `${progress}%`;
+                let progress;
+                if (steps.length === 1) {
+                    progress = 100; // Single step, always 100% progress
+                } else {
+                    progress = (activeStepIndex / (steps.length - 1)) * 100;
+                }
             },
             
             /**
