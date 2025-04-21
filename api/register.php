@@ -104,6 +104,7 @@ try {
     exit;
 
 } catch (PDOException $e) {
+    echo $e->getMessage();
     // Отменяем транзакцию в случае ошибки
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

@@ -45,9 +45,7 @@ include_once '../../includes/header.php';
                         <button id="reactionButton" class="btn btn-danger btn-lg w-100" disabled>Клик!</button>
                     </div>
 
-                    <div id="progressContainer" class="progress mb-3" style="display: none;">
-                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
+                    <div id="progressContainer" class="mb-3"></div>
 
                     <div id="resultsContainer" style="display: none;">
                         <h5>Результаты:</h5>
@@ -103,8 +101,6 @@ include_once '../../includes/header.php';
         const startButton = document.getElementById('startButton');
         const reactionButton = document.getElementById('reactionButton');
         const lightStimulus = document.getElementById('lightStimulus');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -118,6 +114,9 @@ include_once '../../includes/header.php';
         let testInProgress = false;
         let timeoutId;
 
+        // Initialize our new progress bar
+        const progressBar = TestProgress.initTrialProgressBar('progressContainer', totalTrials);
+        
         startButton.addEventListener('click', startTest);
         reactionButton.addEventListener('click', handleReaction);
         saveResultsButton.addEventListener('click', saveResults);
@@ -125,7 +124,7 @@ include_once '../../includes/header.php';
         function startTest() {
             startButton.style.display = 'none';
             reactionButton.disabled = false;
-            progressContainer.style.display = 'block';
+            progressBar.setVisible(true);
             results = [];
             currentTrial = 0;
             testInProgress = true;
@@ -168,7 +167,7 @@ include_once '../../includes/header.php';
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             } else {
                 // Правильная реакция
@@ -181,15 +180,9 @@ include_once '../../includes/header.php';
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             }
-        }
-
-        function updateProgress() {
-            const progress = (currentTrial / totalTrials) * 100;
-            progressBar.style.width = `${progress}%`;
-            progressBar.setAttribute('aria-valuenow', progress);
         }
 
         function endTest() {
@@ -198,66 +191,51 @@ include_once '../../includes/header.php';
 
             // Вычисление среднего времени реакции (исключая преждевременные)
             const validResults = results.filter(r => r.time > 0);
-            let totalTime = 0;
-            let validCount = validResults.length;
-
-            validResults.forEach(result => {
-                totalTime += result.time;
-            });
-
-            const avgTime = validCount > 0 ? (totalTime / validCount).toFixed(1) : "N/A";
-            averageTime.textContent = avgTime;
-
-            // Заполнение таблицы результатов
+            const sum = validResults.reduce((acc, r) => acc + r.time, 0);
+            const avg = validResults.length > 0 ? Math.round(sum / validResults.length) : 0;
+            
+            // Отображение результатов
             resultsTable.innerHTML = '';
-            results.forEach(result => {
+            results.forEach(r => {
                 const row = document.createElement('tr');
-                const trialCell = document.createElement('td');
-                const timeCell = document.createElement('td');
-
-                trialCell.textContent = result.trial;
-                timeCell.textContent = result.time > 0 ? `${result.time} мс` : 'Преждевременная реакция';
-
-                if (result.time < 0) {
-                    row.classList.add('table-danger');
-                }
-
-                row.appendChild(trialCell);
-                row.appendChild(timeCell);
+                row.innerHTML = `
+                    <td>${r.trial}</td>
+                    <td>${r.time > 0 ? r.time + ' мс' : 'Преждевременная реакция'}</td>
+                `;
                 resultsTable.appendChild(row);
             });
-
+            
+            averageTime.textContent = avg;
             resultsContainer.style.display = 'block';
         }
 
         function saveResults() {
-            const testData = {
-                test_type: 'light_reaction',
-                results: results,
-                average_time: parseFloat(averageTime.textContent)
-            };
-
+            // Отправка данных на сервер
             fetch('/api/save_test_results.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(testData)
+                body: JSON.stringify({
+                    test_type: 'light_reaction',
+                    results: results,
+                    average_time: parseInt(averageTime.textContent)
+                }),
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Результаты успешно сохранены!');
-                        saveResultsButton.disabled = true;
-                        saveResultsButton.textContent = 'Результаты сохранены';
-                    } else {
-                        alert('Ошибка при сохранении результатов: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при сохранении результатов');
-                });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Результаты успешно сохранены!');
+                    // Перенаправление на страницу результатов
+                    window.location.href = '/tests/results.php';
+                } else {
+                    alert('Ошибка при сохранении результатов: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при сохранении результатов');
+            });
         }
     });
 </script>

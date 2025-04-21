@@ -54,9 +54,7 @@ include_once '../../includes/header.php';
                         </div>
                     </div>
 
-                    <div id="progressContainer" class="progress mb-3" style="display: none;">
-                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
+                    <div id="progressContainer" class="mb-3"></div>
 
                     <div id="resultsContainer" style="display: none;">
                         <h5>Результаты:</h5>
@@ -118,8 +116,6 @@ include_once '../../includes/header.php';
         const evenButton = document.getElementById('evenButton');
         const oddButton = document.getElementById('oddButton');
         const numberDisplay = document.getElementById('numberDisplay');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -134,6 +130,9 @@ include_once '../../includes/header.php';
         let timeoutId;
         let currentNumber;
 
+        // Initialize our new progress bar
+        const progressBar = TestProgress.initTrialProgressBar('progressContainer', totalTrials);
+
         startButton.addEventListener('click', startTest);
         evenButton.addEventListener('click', () => handleResponse('even'));
         oddButton.addEventListener('click', () => handleResponse('odd'));
@@ -143,7 +142,7 @@ include_once '../../includes/header.php';
             startButton.style.display = 'none';
             evenButton.disabled = false;
             oddButton.disabled = false;
-            progressContainer.style.display = 'block';
+            progressBar.setVisible(true);
             results = [];
             currentTrial = 0;
             testInProgress = true;
@@ -190,7 +189,7 @@ include_once '../../includes/header.php';
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             } else {
                 // Правильная реакция
@@ -210,15 +209,9 @@ include_once '../../includes/header.php';
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             }
-        }
-
-        function updateProgress() {
-            const progress = (currentTrial / totalTrials) * 100;
-            progressBar.style.width = `${progress}%`;
-            progressBar.setAttribute('aria-valuenow', progress);
         }
 
         function endTest() {

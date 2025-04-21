@@ -1,0 +1,101 @@
+/* Progress Bar Component Styles */
+.test-progress-container {
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    margin: 15px 0;
+    height: 20px;
+    overflow: hidden;
+}
+
+.test-progress-bar {
+    height: 100%;
+    background-color: var(--primary, #3498db);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.test-progress-text {
+    color: var(--foreground, #fafafa);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    padding: 0 5px;
+}
+
+/* For test progress indicators with steps */
+.test-progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.test-progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+}
+
+.test-progress-step-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    border: 2px solid #ced4da;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.test-progress-step-connector {
+    position: absolute;
+    top: 10px;
+    height: 2px;
+    width: 100%;
+    right: 50%;
+    background-color: #ced4da;
+    z-index: 1;
+}
+
+.test-progress-step:first-child .test-progress-step-connector {
+    display: none;
+}
+
+.test-progress-step-label {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: var(--muted-foreground, #a1a1aa);
+}
+
+/* Active step */
+.test-progress-step.active .test-progress-step-marker {
+    background-color: var(--primary, #3498db);
+    border-color: var(--primary, #3498db);
+}
+
+.test-progress-step.completed .test-progress-step-marker {
+    background-color: var(--success, #2ecc71);
+    border-color: var(--success, #2ecc71);
+}
+
+.test-progress-step.completed .test-progress-step-connector,
+.test-progress-step.active .test-progress-step-connector {
+    background-color: var(--success, #2ecc71);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .test-progress-step-label {
+        font-size: 0.7rem;
+    }
+    
+    .test-progress-step-marker {
+        width: 16px;
+        height: 16px;
+    }
+} 
