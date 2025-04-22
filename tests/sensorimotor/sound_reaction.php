@@ -21,16 +21,17 @@ include_once '../../includes/header.php';
                     <h5 class="mb-0">Тест на простую сенсомоторную реакцию на звук</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на звуковой стимул. Как только вы услышите
-                        звуковой сигнал, нажмите как можно быстрее на кнопку.</p>
+                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на <strong>звуковой стимул</strong>. Как только вы услышите
+                        звуковой сигнал, нажмите как можно быстрее на кнопку. Тест основан только на слуховом восприятии,
+                        визуальный индикатор минимален и предназначен только для доступности.</p>
 
                     <div class="alert alert-info">
                         <strong>Инструкция:</strong>
                         <ol>
                             <li>Убедитесь, что звук на вашем устройстве включен</li>
                             <li>Нажмите кнопку "Начать тест"</li>
-                            <li>Будьте готовы и внимательно слушайте</li>
-                            <li>Как только услышите звуковой сигнал, нажмите кнопку "Клик!" как можно быстрее</li>
+                            <li>Будьте готовы и внимательно <strong>слушайте</strong></li>
+                            <li>Как только <strong>услышите</strong> звуковой сигнал, нажмите кнопку "Клик!" как можно быстрее</li>
                             <li>Тест включает 10 попыток</li>
                         </ol>
                     </div>
@@ -41,7 +42,9 @@ include_once '../../includes/header.php';
 
                     <div class="reaction-test-area mb-4">
                         <div id="stimulusArea" class="stimulus-area d-flex align-items-center justify-content-center">
-                            <i id="soundIcon" class="fas fa-volume-up fa-5x text-muted" style="display: none;"></i>
+                            <div id="audioStatusContainer" class="audio-status-container" style="display: none;">
+                                <p class="audio-status-text">Звук воспроизведен</p>
+                            </div>
                         </div>
                         <button id="reactionButton" class="btn btn-danger btn-lg w-100" disabled>Клик!</button>
                     </div>
@@ -88,13 +91,23 @@ include_once '../../includes/header.php';
         position: relative;
         margin-bottom: 15px;
     }
+
+    .audio-status-container {
+        text-align: center;
+    }
+
+    .audio-status-text {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin: 0;
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const startButton = document.getElementById('startButton');
         const reactionButton = document.getElementById('reactionButton');
-        const soundIcon = document.getElementById('soundIcon');
+        const audioStatusContainer = document.getElementById('audioStatusContainer');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -140,7 +153,7 @@ include_once '../../includes/header.php';
             }
 
             reactionButton.disabled = false;
-            soundIcon.style.display = 'none';
+            audioStatusContainer.style.display = 'none';
 
             // Случайная задержка от 1 до 4 секунд
             const delay = Math.floor(Math.random() * 3000) + 1000;
@@ -151,8 +164,9 @@ include_once '../../includes/header.php';
                 // Воспроизведение звука
                 playSound();
 
-                // Показать иконку звука
-                soundIcon.style.display = 'block';
+                // Показать индикатор звука (только для поддержки глухих пользователей)
+                audioStatusContainer.style.display = 'block';
+                
                 startTime = Date.now();
             }, delay);
         }
@@ -195,7 +209,7 @@ include_once '../../includes/header.php';
         }
 
         function handleReaction() {
-            if (soundIcon.style.display === 'none') {
+            if (audioStatusContainer.style.display === 'none') {
                 // Преждевременная реакция
                 clearTimeout(timeoutId);
                 results.push({
