@@ -246,9 +246,11 @@ include_once '../../includes/header.php';
             const avgTime = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
             averageTime.textContent = avgTime;
 
-            // Вычисление точности
-            const totalResponses = results.filter(r => r.time > 0).length;
-            const accuracyValue = totalResponses > 0 ? (correctCount / totalResponses * 100).toFixed(1) : "0";
+            // Вычисление точности (включая преждевременные реакции)
+            // Делим количество правильных ответов на общее количество попыток
+            const accuracyValue = results.length > 0
+                ? ((correctResults.length / results.length) * 100).toFixed(1)
+                : "0";
             accuracy.textContent = accuracyValue;
 
             // Заполнение таблицы результатов
