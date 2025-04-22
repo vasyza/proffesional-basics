@@ -18,19 +18,21 @@ include_once '../../includes/header.php';
         <div class="col-md-8 mx-auto">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Тест на сложную сенсомоторную реакцию: определение четности (визуально)</h5>
+                    <h5 class="mb-0">Тест на сложную сенсомоторную реакцию: сложение в уме (визуально)</h5>
                 </div>
                 <div class="card-body">
                     <p class="mb-4">Этот тест измеряет скорость вашей реакции на визуальный арифметический стимул. На
-                        экране будут появляться числа, и вы должны определить, четное оно или нечетное.</p>
+                        экране будут появляться пары чисел, которые вам нужно сложить в уме и определить, четная или нечетная
+                        получившаяся сумма.</p>
 
                     <div class="alert alert-info">
                         <strong>Инструкция:</strong>
                         <ol>
                             <li>Нажмите кнопку "Начать тест"</li>
-                            <li>На экране будут появляться числа</li>
-                            <li>Если число <strong>ЧЕТНОЕ</strong> - нажмите кнопку "Четное"</li>
-                            <li>Если число <strong>НЕЧЕТНОЕ</strong> - нажмите кнопку "Нечетное"</li>
+                            <li>На экране будут появляться пары чисел</li>
+                            <li>Сложите эти числа в уме</li>
+                            <li>Если полученная сумма <strong>ЧЕТНАЯ</strong> - нажмите кнопку "Четное"</li>
+                            <li>Если полученная сумма <strong>НЕЧЕТНАЯ</strong> - нажмите кнопку "Нечетное"</li>
                             <li>Тест включает 15 попыток</li>
                         </ol>
                     </div>
@@ -54,9 +56,7 @@ include_once '../../includes/header.php';
                         </div>
                     </div>
 
-                    <div id="progressContainer" class="progress mb-3" style="display: none;">
-                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
+                    <div id="progressContainer" class="mb-3"></div>
 
                     <div id="resultsContainer" style="display: none;">
                         <h5>Результаты:</h5>
@@ -64,7 +64,8 @@ include_once '../../includes/header.php';
                             <thead>
                                 <tr>
                                     <th>Попытка</th>
-                                    <th>Число</th>
+                                    <th>Числа</th>
+                                    <th>Сумма</th>
                                     <th>Время реакции (мс)</th>
                                     <th>Правильно</th>
                                 </tr>
@@ -106,9 +107,10 @@ include_once '../../includes/header.php';
     }
 
     .number-display {
-        font-size: 6rem;
+        font-size: 3rem;
         font-weight: bold;
         color: #333;
+        text-align: center;
     }
 </style>
 
@@ -118,8 +120,6 @@ include_once '../../includes/header.php';
         const evenButton = document.getElementById('evenButton');
         const oddButton = document.getElementById('oddButton');
         const numberDisplay = document.getElementById('numberDisplay');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -132,7 +132,11 @@ include_once '../../includes/header.php';
         let results = [];
         let testInProgress = false;
         let timeoutId;
-        let currentNumber;
+        let currentNumber1;
+        let currentNumber2;
+
+        // Initialize our new progress bar
+        const progressBar = TestProgress.initTrialProgressBar('progressContainer', totalTrials);
 
         startButton.addEventListener('click', startTest);
         evenButton.addEventListener('click', () => handleResponse('even'));
@@ -143,7 +147,7 @@ include_once '../../includes/header.php';
             startButton.style.display = 'none';
             evenButton.disabled = false;
             oddButton.disabled = false;
-            progressContainer.style.display = 'block';
+            progressBar.setVisible(true);
             results = [];
             currentTrial = 0;
             testInProgress = true;
@@ -165,12 +169,12 @@ include_once '../../includes/header.php';
             timeoutId = setTimeout(() => {
                 if (!testInProgress) return;
 
-                // Генерация случайного числа от 10 до 999
-                // Используем больший диапазон для повышения сложности
-                currentNumber = Math.floor(Math.random() * 990) + 10;
+                // Генерация двух случайных чисел от 1 до 50
+                currentNumber1 = Math.floor(Math.random() * 50) + 1;
+                currentNumber2 = Math.floor(Math.random() * 50) + 1;
 
-                // Отображение числа
-                numberDisplay.textContent = currentNumber;
+                // Отображение чисел
+                numberDisplay.innerHTML = `${currentNumber1} + ${currentNumber2} = ?`;
                 numberDisplay.style.display = 'block';
 
                 startTime = Date.now();
@@ -183,42 +187,41 @@ include_once '../../includes/header.php';
                 clearTimeout(timeoutId);
                 results.push({
                     trial: currentTrial + 1,
-                    number: null,
+                    number1: null,
+                    number2: null,
+                    sum: null,
                     response: response,
                     time: -1,
                     correct: false
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             } else {
                 // Правильная реакция
                 const endTime = Date.now();
                 const reactionTime = endTime - startTime;
 
-                // Проверяем правильность ответа
-                const isEven = currentNumber % 2 === 0;
+                // Вычисление суммы и проверка правильности ответа
+                const sum = currentNumber1 + currentNumber2;
+                const isEven = sum % 2 === 0;
                 const isCorrect = (response === 'even' && isEven) || (response === 'odd' && !isEven);
 
                 results.push({
                     trial: currentTrial + 1,
-                    number: currentNumber,
+                    number1: currentNumber1,
+                    number2: currentNumber2,
+                    sum: sum,
                     response: response,
                     time: reactionTime,
                     correct: isCorrect
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             }
-        }
-
-        function updateProgress() {
-            const progress = (currentTrial / totalTrials) * 100;
-            progressBar.style.width = `${progress}%`;
-            progressBar.setAttribute('aria-valuenow', progress);
         }
 
         function endTest() {
@@ -238,10 +241,10 @@ include_once '../../includes/header.php';
             const avgTime = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
             averageTime.textContent = avgTime;
 
-            // Вычисление точности (исключая преждевременные реакции)
-            const validResults = results.filter(r => r.time > 0);
-            const accuracyValue = validResults.length > 0
-                ? ((correctResults.length / validResults.length) * 100).toFixed(1)
+            // Вычисление точности (включая преждевременные реакции)
+            // Делим количество правильных ответов на общее количество попыток
+            const accuracyValue = results.length > 0
+                ? ((correctResults.length / results.length) * 100).toFixed(1)
                 : "0";
             accuracy.textContent = accuracyValue;
 
@@ -250,19 +253,22 @@ include_once '../../includes/header.php';
             results.forEach(result => {
                 const row = document.createElement('tr');
                 const trialCell = document.createElement('td');
-                const numberCell = document.createElement('td');
+                const numbersCell = document.createElement('td');
+                const sumCell = document.createElement('td');
                 const timeCell = document.createElement('td');
                 const correctCell = document.createElement('td');
 
                 trialCell.textContent = result.trial;
 
                 if (result.time < 0) {
-                    numberCell.textContent = 'N/A';
+                    numbersCell.textContent = 'N/A';
+                    sumCell.textContent = 'N/A';
                     timeCell.textContent = 'Преждевременная реакция';
                     correctCell.textContent = 'Нет';
                     row.classList.add('table-danger');
                 } else {
-                    numberCell.textContent = result.number;
+                    numbersCell.textContent = `${result.number1} + ${result.number2}`;
+                    sumCell.textContent = result.sum;
                     timeCell.textContent = `${result.time} мс`;
                     correctCell.textContent = result.correct ? 'Да' : 'Нет';
 
@@ -272,7 +278,8 @@ include_once '../../includes/header.php';
                 }
 
                 row.appendChild(trialCell);
-                row.appendChild(numberCell);
+                row.appendChild(numbersCell);
+                row.appendChild(sumCell);
                 row.appendChild(timeCell);
                 row.appendChild(correctCell);
                 resultsTable.appendChild(row);

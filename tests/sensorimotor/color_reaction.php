@@ -61,9 +61,7 @@ include_once '../../includes/header.php';
                         </div>
                     </div>
 
-                    <div id="progressContainer" class="progress mb-3" style="display: none;">
-                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
+                    <div id="progressContainer" class="mb-3"></div>
 
                     <div id="resultsContainer" style="display: none;">
                         <h5>Результаты:</h5>
@@ -131,8 +129,6 @@ include_once '../../includes/header.php';
         const greenButton = document.getElementById('greenButton');
         const blueButton = document.getElementById('blueButton');
         const colorStimulus = document.getElementById('colorStimulus');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -153,6 +149,9 @@ include_once '../../includes/header.php';
         let timeoutId;
         let currentColor;
 
+        // Initialize our new progress bar
+        const progressBar = TestProgress.initTrialProgressBar('progressContainer', totalTrials);
+
         startButton.addEventListener('click', startTest);
         redButton.addEventListener('click', () => handleColorClick('red'));
         greenButton.addEventListener('click', () => handleColorClick('green'));
@@ -164,7 +163,7 @@ include_once '../../includes/header.php';
             redButton.disabled = false;
             greenButton.disabled = false;
             blueButton.disabled = false;
-            progressContainer.style.display = 'block';
+            progressBar.setVisible(true);
             results = [];
             currentTrial = 0;
             testInProgress = true;
@@ -199,17 +198,16 @@ include_once '../../includes/header.php';
         function handleColorClick(color) {
             if (colorStimulus.style.display === 'none') {
                 // Преждевременная реакция
+                clearTimeout(timeoutId);
                 results.push({
                     trial: currentTrial + 1,
-                    color: 'none',
-                    response: color,
+                    color: null,
                     time: -1,
-                    correct: false
+                    isCorrect: false
                 });
 
-                clearTimeout(timeoutId);
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             } else {
                 // Реакция на стимул
@@ -220,21 +218,14 @@ include_once '../../includes/header.php';
                 results.push({
                     trial: currentTrial + 1,
                     color: currentColor.name,
-                    response: color,
                     time: reactionTime,
-                    correct: isCorrect
+                    isCorrect: isCorrect
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             }
-        }
-
-        function updateProgress() {
-            const progress = (currentTrial / totalTrials) * 100;
-            progressBar.style.width = `${progress}%`;
-            progressBar.setAttribute('aria-valuenow', progress);
         }
 
         function endTest() {
@@ -244,7 +235,7 @@ include_once '../../includes/header.php';
             blueButton.disabled = true;
 
             // Вычисление среднего времени реакции (только для корректных ответов)
-            const correctResults = results.filter(r => r.correct && r.time > 0);
+            const correctResults = results.filter(r => r.isCorrect && r.time > 0);
             let totalTime = 0;
             let correctCount = correctResults.length;
 
@@ -255,10 +246,10 @@ include_once '../../includes/header.php';
             const avgTime = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
             averageTime.textContent = avgTime;
 
-            // Вычисление точности (исключая преждевременные реакции)
-            const validResults = results.filter(r => r.time > 0);
-            const accuracyValue = validResults.length > 0
-                ? ((correctResults.length / validResults.length) * 100).toFixed(1)
+            // Вычисление точности (включая преждевременные реакции)
+            // Делим количество правильных ответов на общее количество попыток
+            const accuracyValue = results.length > 0
+                ? ((correctResults.length / results.length) * 100).toFixed(1)
                 : "0";
             accuracy.textContent = accuracyValue;
 
@@ -272,26 +263,12 @@ include_once '../../includes/header.php';
                 const correctCell = document.createElement('td');
 
                 trialCell.textContent = result.trial;
+                colorCell.textContent = result.color ? result.color : 'Преждевременная реакция';
+                timeCell.textContent = result.time > 0 ? `${result.time} мс` : '-';
+                correctCell.textContent = result.isCorrect ? 'Да' : 'Нет';
 
-                if (result.time < 0) {
-                    colorCell.textContent = 'N/A';
-                    timeCell.textContent = 'Преждевременная реакция';
-                    correctCell.textContent = 'Нет';
-                    row.classList.add('table-danger');
-                } else {
-                    // Отображение цвета
-                    const colorSpan = document.createElement('span');
-                    colorSpan.textContent = getColorName(result.color);
-                    colorSpan.style.color = getColorHex(result.color);
-                    colorSpan.style.fontWeight = 'bold';
-                    colorCell.appendChild(colorSpan);
-
-                    timeCell.textContent = `${result.time} мс`;
-                    correctCell.textContent = result.correct ? 'Да' : 'Нет';
-
-                    if (!result.correct) {
-                        row.classList.add('table-warning');
-                    }
+                if (!result.isCorrect) {
+                    row.classList.add('table-warning');
                 }
 
                 row.appendChild(trialCell);

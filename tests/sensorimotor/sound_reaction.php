@@ -21,16 +21,17 @@ include_once '../../includes/header.php';
                     <h5 class="mb-0">Тест на простую сенсомоторную реакцию на звук</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на звуковой стимул. Как только вы услышите
-                        звуковой сигнал, нажмите как можно быстрее на кнопку.</p>
+                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на <strong>звуковой стимул</strong>. Как только вы услышите
+                        звуковой сигнал, нажмите как можно быстрее на кнопку. Тест основан только на слуховом восприятии,
+                        визуальный индикатор минимален и предназначен только для доступности.</p>
 
                     <div class="alert alert-info">
                         <strong>Инструкция:</strong>
                         <ol>
                             <li>Убедитесь, что звук на вашем устройстве включен</li>
                             <li>Нажмите кнопку "Начать тест"</li>
-                            <li>Будьте готовы и внимательно слушайте</li>
-                            <li>Как только услышите звуковой сигнал, нажмите кнопку "Клик!" как можно быстрее</li>
+                            <li>Будьте готовы и внимательно <strong>слушайте</strong></li>
+                            <li>Как только <strong>услышите</strong> звуковой сигнал, нажмите кнопку "Клик!" как можно быстрее</li>
                             <li>Тест включает 10 попыток</li>
                         </ol>
                     </div>
@@ -41,14 +42,14 @@ include_once '../../includes/header.php';
 
                     <div class="reaction-test-area mb-4">
                         <div id="stimulusArea" class="stimulus-area d-flex align-items-center justify-content-center">
-                            <i id="soundIcon" class="fas fa-volume-up fa-5x text-muted" style="display: none;"></i>
+                            <div id="audioStatusContainer" class="audio-status-container" style="display: none;">
+                                <p class="audio-status-text">Звук воспроизведен</p>
+                            </div>
                         </div>
                         <button id="reactionButton" class="btn btn-danger btn-lg w-100" disabled>Клик!</button>
                     </div>
 
-                    <div id="progressContainer" class="progress mb-3" style="display: none;">
-                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
+                    <div id="progressContainer" class="mb-3"></div>
 
                     <div id="resultsContainer" style="display: none;">
                         <h5>Результаты:</h5>
@@ -90,15 +91,23 @@ include_once '../../includes/header.php';
         position: relative;
         margin-bottom: 15px;
     }
+
+    .audio-status-container {
+        text-align: center;
+    }
+
+    .audio-status-text {
+        font-size: 1.2rem;
+        color: #6c757d;
+        margin: 0;
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const startButton = document.getElementById('startButton');
         const reactionButton = document.getElementById('reactionButton');
-        const soundIcon = document.getElementById('soundIcon');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
+        const audioStatusContainer = document.getElementById('audioStatusContainer');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -119,6 +128,9 @@ include_once '../../includes/header.php';
         let testInProgress = false;
         let timeoutId;
 
+        // Initialize our new progress bar
+        const progressBar = TestProgress.initTrialProgressBar('progressContainer', totalTrials);
+
         startButton.addEventListener('click', startTest);
         reactionButton.addEventListener('click', handleReaction);
         saveResultsButton.addEventListener('click', saveResults);
@@ -126,7 +138,7 @@ include_once '../../includes/header.php';
         function startTest() {
             startButton.style.display = 'none';
             reactionButton.disabled = false;
-            progressContainer.style.display = 'block';
+            progressBar.setVisible(true);
             results = [];
             currentTrial = 0;
             testInProgress = true;
@@ -141,7 +153,7 @@ include_once '../../includes/header.php';
             }
 
             reactionButton.disabled = false;
-            soundIcon.style.display = 'none';
+            audioStatusContainer.style.display = 'none';
 
             // Случайная задержка от 1 до 4 секунд
             const delay = Math.floor(Math.random() * 3000) + 1000;
@@ -152,8 +164,9 @@ include_once '../../includes/header.php';
                 // Воспроизведение звука
                 playSound();
 
-                // Показать иконку звука
-                soundIcon.style.display = 'block';
+                // Показать индикатор звука (только для поддержки глухих пользователей)
+                audioStatusContainer.style.display = 'block';
+                
                 startTime = Date.now();
             }, delay);
         }
@@ -196,7 +209,7 @@ include_once '../../includes/header.php';
         }
 
         function handleReaction() {
-            if (soundIcon.style.display === 'none') {
+            if (audioStatusContainer.style.display === 'none') {
                 // Преждевременная реакция
                 clearTimeout(timeoutId);
                 results.push({
@@ -205,7 +218,7 @@ include_once '../../includes/header.php';
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             } else {
                 // Правильная реакция
@@ -218,15 +231,9 @@ include_once '../../includes/header.php';
                 });
 
                 currentTrial++;
-                updateProgress();
+                progressBar.updateTrial(currentTrial);
                 nextTrial();
             }
-        }
-
-        function updateProgress() {
-            const progress = (currentTrial / totalTrials) * 100;
-            progressBar.style.width = `${progress}%`;
-            progressBar.setAttribute('aria-valuenow', progress);
         }
 
         function endTest() {
@@ -235,66 +242,51 @@ include_once '../../includes/header.php';
 
             // Вычисление среднего времени реакции (исключая преждевременные)
             const validResults = results.filter(r => r.time > 0);
-            let totalTime = 0;
-            let validCount = validResults.length;
-
-            validResults.forEach(result => {
-                totalTime += result.time;
-            });
-
-            const avgTime = validCount > 0 ? (totalTime / validCount).toFixed(1) : "N/A";
-            averageTime.textContent = avgTime;
-
-            // Заполнение таблицы результатов
+            const sum = validResults.reduce((acc, r) => acc + r.time, 0);
+            const avg = validResults.length > 0 ? Math.round(sum / validResults.length) : 0;
+            
+            // Отображение результатов
             resultsTable.innerHTML = '';
-            results.forEach(result => {
+            results.forEach(r => {
                 const row = document.createElement('tr');
-                const trialCell = document.createElement('td');
-                const timeCell = document.createElement('td');
-
-                trialCell.textContent = result.trial;
-                timeCell.textContent = result.time > 0 ? `${result.time} мс` : 'Преждевременная реакция';
-
-                if (result.time < 0) {
-                    row.classList.add('table-danger');
-                }
-
-                row.appendChild(trialCell);
-                row.appendChild(timeCell);
+                row.innerHTML = `
+                    <td>${r.trial}</td>
+                    <td>${r.time > 0 ? r.time + ' мс' : 'Преждевременная реакция'}</td>
+                `;
                 resultsTable.appendChild(row);
             });
-
+            
+            averageTime.textContent = avg;
             resultsContainer.style.display = 'block';
         }
 
         function saveResults() {
-            const testData = {
-                test_type: 'sound_reaction',
-                results: results,
-                average_time: parseFloat(averageTime.textContent)
-            };
-
+            // Отправка данных на сервер
             fetch('/api/save_test_results.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(testData)
+                body: JSON.stringify({
+                    test_type: 'sound_reaction',
+                    results: results,
+                    average_time: parseInt(averageTime.textContent)
+                }),
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Результаты успешно сохранены!');
-                        saveResultsButton.disabled = true;
-                        saveResultsButton.textContent = 'Результаты сохранены';
-                    } else {
-                        alert('Ошибка при сохранении результатов: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при сохранении результатов');
-                });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Результаты успешно сохранены!');
+                    // Перенаправление на страницу результатов
+                    window.location.href = '/tests/results.php';
+                } else {
+                    alert('Ошибка при сохранении результатов: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при сохранении результатов');
+            });
         }
     });
 </script>
