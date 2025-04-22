@@ -21,16 +21,16 @@ include_once '../../includes/header.php';
                     <h5 class="mb-0">Тест на сложную сенсомоторную реакцию: сложение в уме (звуковой сигнал)</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на звуковой арифметический стимул. Вы
-                        услышите два числа, которые нужно сложить в уме и определить, четная или нечетная
-                        получившаяся сумма.</p>
+                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на <strong>звуковой арифметический стимул</strong>. Вы
+                        <strong>услышите</strong> два числа, которые нужно сложить в уме и определить, четная или нечетная
+                        получившаяся сумма. Тест рассчитан на аудиальное восприятие информации без визуальной подсказки.</p>
 
                     <div class="alert alert-info">
                         <strong>Инструкция:</strong>
                         <ol>
                             <li>Убедитесь, что звук на вашем устройстве включен</li>
                             <li>Нажмите кнопку "Начать тест"</li>
-                            <li>Вы услышите два числа, произнесенных голосом</li>
+                            <li>Вы <strong>услышите</strong> два числа, произнесенных голосом</li>
                             <li>Сложите эти числа в уме</li>
                             <li>Если полученная сумма <strong>ЧЕТНАЯ</strong> - нажмите кнопку "Четное"</li>
                             <li>Если полученная сумма <strong>НЕЧЕТНАЯ</strong> - нажмите кнопку "Нечетное"</li>
@@ -46,7 +46,7 @@ include_once '../../includes/header.php';
                         <div id="stimulusArea" class="stimulus-area d-flex align-items-center justify-content-center">
                             <div id="numberDisplayWrapper" style="display: none;">
                                 <i class="fas fa-volume-up fa-3x text-primary mb-3"></i>
-                                <div id="numberDisplay" class="number-display"></div>
+                                <div id="audioInProgressText" class="audio-status">Слушайте внимательно...</div>
                             </div>
                         </div>
 
@@ -116,6 +116,13 @@ include_once '../../includes/header.php';
         margin-top: 10px;
         text-align: center;
     }
+
+    .audio-status {
+        font-size: 1.2rem;
+        margin-top: 10px;
+        color: #6c757d;
+        text-align: center;
+    }
 </style>
 
 <!-- Полифилл для поддержки синтеза речи в браузерах -->
@@ -127,7 +134,7 @@ include_once '../../includes/header.php';
         const evenButton = document.getElementById('evenButton');
         const oddButton = document.getElementById('oddButton');
         const numberDisplayWrapper = document.getElementById('numberDisplayWrapper');
-        const numberDisplay = document.getElementById('numberDisplay');
+        const audioInProgressText = document.getElementById('audioInProgressText');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsTable = document.getElementById('resultsTable');
         const averageTime = document.getElementById('averageTime');
@@ -190,8 +197,7 @@ include_once '../../includes/header.php';
                 currentNumber1 = Math.floor(Math.random() * 30) + 1;
                 currentNumber2 = Math.floor(Math.random() * 30) + 1;
 
-                // Отображение чисел
-                numberDisplay.innerHTML = `${currentNumber1} + ${currentNumber2} = ?`;
+                // Показать иконку звука и статус
                 numberDisplayWrapper.style.display = 'block';
 
                 // Произнести числа
@@ -208,6 +214,7 @@ include_once '../../includes/header.php';
                     rate: 1,
                     onend: function() {
                         isSpeaking = false;
+                        audioInProgressText.textContent = "Оцените сумму!";
                         startTime = Date.now(); // Начинаем отсчет после завершения произношения
                     }
                 });
@@ -218,6 +225,7 @@ include_once '../../includes/header.php';
                 utterance.rate = 1;
                 utterance.onend = function() {
                     isSpeaking = false;
+                    audioInProgressText.textContent = "Оцените сумму!";
                     startTime = Date.now(); // Начинаем отсчет после завершения произношения
                 };
                 window.speechSynthesis.speak(utterance);
