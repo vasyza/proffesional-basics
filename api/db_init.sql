@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS professions (
     title VARCHAR(100) NOT NULL,
     type VARCHAR(50) DEFAULT 'Не указана' NOT NULL,
     description TEXT NOT NULL,
-    skills TEXT NOT NULL,
+    skills TEXT DEFAULT 'Не указаны',
     salary_range VARCHAR(100),
     demand_level INTEGER, -- от 1 до 5
     image_path VARCHAR(255),
