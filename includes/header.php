@@ -57,12 +57,12 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : '';
                     <li class="nav-item">
                         <a class="nav-link" href="/professions.php">Каталог профессий</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/groups.php">Рабочие группы</a>
-                    </li>
-                    <li class="nav-item">
+                    </li> -->
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/group_roles.php">Роли в группах</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div class="navbar-nav">
                     <?php if ($isLoggedIn): ?>

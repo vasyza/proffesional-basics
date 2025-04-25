@@ -45,7 +45,7 @@ include 'includes/header.php';
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body text-center p-4">
                             <i class="fas fa-users fa-3x text-primary mb-3"></i>
@@ -53,7 +53,7 @@ include 'includes/header.php';
                             <p class="mb-0">Возможность объединяться в команды по интересам для совместной работы над проектами и обмена опытом.</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body text-center p-4">
@@ -77,7 +77,7 @@ include 'includes/header.php';
                         <div class="card-body text-center p-4">
                             <i class="fas fa-user-graduate fa-3x text-primary mb-3"></i>
                             <h3 class="h5 mb-3">Студенты</h3>
-                            <p class="mb-0">Изучайте информацию о профессиях, вступайте в рабочие группы и получайте консультации.</p>
+                            <p class="mb-0">Изучайте информацию о профессиях и получайте консультации.</p>
                         </div>
                     </div>
                 </div>

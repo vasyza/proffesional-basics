@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 session_start();
 require_once '../api/config.php';
 
@@ -137,4 +137,4 @@ function confirmDelete(id, name) {
 }
 </script>
 
-<?php include_once '../includes/admin_footer.php'; ?> 
+<?php include_once '../includes/admin_footer.php'; ?>  -->

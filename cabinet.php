@@ -28,14 +28,14 @@ try {
     }
 
     // Получаем группы пользователя
-    $stmt = $pdo->prepare("
-        SELECT sg.id, sg.name, gm.role
-        FROM student_groups sg
-        JOIN group_members gm ON sg.id = gm.group_id
-        WHERE gm.user_id = ?
-    ");
-    $stmt->execute([$userId]);
-    $user_groups = $stmt->fetchAll();
+    // $stmt = $pdo->prepare("
+    //     SELECT sg.id, sg.name, gm.role
+    //     FROM student_groups sg
+    //     JOIN group_members gm ON sg.id = gm.group_id
+    //     WHERE gm.user_id = ?
+    // ");
+    // $stmt->execute([$userId]);
+    // $user_groups = $stmt->fetchAll();
 
     // Для экспертов - получаем их оценки профессий
     $expert_ratings = [];
@@ -129,7 +129,7 @@ include 'includes/header.php';
                 </div>
             </div>
 
-            <?php if ($user_groups && count($user_groups) > 0): ?>
+            <!-- <?php if ($user_groups && count($user_groups) > 0): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
                         <h5 class="card-title mb-0">Мои группы</h5>
@@ -153,7 +153,7 @@ include 'includes/header.php';
                         </a>
                     </div>
                 </div>
-            <?php endif; ?>
+            <?php endif; ?> -->
         </div>
 
         <div class="col-md-8">
@@ -354,12 +354,12 @@ include 'includes/header.php';
                                     Управление консультациями
                                 </a>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <!-- <div class="col-md-6 mb-3">
                                 <a href="/admin/manage_groups.php" class="btn btn-outline-primary btn-lg w-100">
                                     <i class="fas fa-user-friends me-2"></i>
                                     Управление группами
                                 </a>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

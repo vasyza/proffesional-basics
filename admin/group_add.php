@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 session_start();
 require_once '../api/config.php';
 
@@ -128,4 +128,4 @@ include_once '../includes/admin_header.php';
     })();
 </script>
 
-<?php include_once '../includes/admin_footer.php'; ?> 
+<?php include_once '../includes/admin_footer.php'; ?>  -->
