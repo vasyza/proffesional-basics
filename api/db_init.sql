@@ -59,6 +59,22 @@ CREATE TABLE IF NOT EXISTS group_members (
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE profession_quality_ratings (
+    id SERIAL PRIMARY KEY,
+    profession_id INTEGER NOT NULL REFERENCES professions(id) ON DELETE CASCADE,
+    expert_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    quality_id INTEGER NOT NULL REFERENCES professional_qualities(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE professional_qualities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(100)
+);
+
 CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_professions_title ON professions(title);

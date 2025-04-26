@@ -67,6 +67,7 @@ try {
 } catch (PDOException $e) {
     die("Ошибка получения данных: " . $e->getMessage());
 }
+$recent_ratings = [];
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -204,7 +205,7 @@ try {
                     <p>Опыт работы: <strong><?php echo htmlspecialchars($expert_data['experience'] ?? 'Не указан'); ?></strong></p>
                     <p>Образование: <strong><?php echo htmlspecialchars($expert_data['education'] ?? 'Не указано'); ?></strong></p>
                     
-                    <div class="expert-stats">
+                    <!-- <div class="expert-stats">
                         <div class="stat-item">
                             <div class="stat-value"><?php echo intval($expert_data['ratings_count'] ?? 0); ?></div>
                             <div class="stat-label">Оценок</div>
@@ -213,11 +214,11 @@ try {
                             <div class="stat-value"><?php echo number_format($expert_data['avg_rating'] ?? 0, 1); ?></div>
                             <div class="stat-label">Средняя оценка</div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 
                 <!-- Последние оценки -->
-                <div class="expert-card">
+                <!-- <div class="expert-card">
                     <h3>Ваши последние оценки</h3>
                     <?php if (count($recent_ratings) > 0): ?>
                         <ul class="list-group">
@@ -238,7 +239,7 @@ try {
                     <?php else: ?>
                         <p class="text-muted">У вас пока нет оценок.</p>
                     <?php endif; ?>
-                </div>
+                </div> -->
             </div>
             
             <div class="col-md-8">
@@ -268,7 +269,7 @@ try {
                                 
                                 <div class="d-flex justify-content-between mt-auto">
                                     <span class="badge bg-secondary">
-                                        <?php echo htmlspecialchars($profession['category']); ?>
+                                        <?php echo htmlspecialchars($profession['type']); ?>
                                     </span>
                                     
                                     <?php if (isset($ratedPvkProfessions[$profession['id']])): ?>
@@ -285,7 +286,7 @@ try {
                                 </div>
                                 
                                 <div class="mt-3 d-grid gap-2">
-                                    <?php if (!$profession['is_rated']): ?>
+                                    <!-- <?php if (!$profession['is_rated']): ?>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rateModal<?php echo $profession['id']; ?>">
                                             <i class="fas fa-star me-1"></i>Оценить профессию
                                         </button>
@@ -293,13 +294,13 @@ try {
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#rateModal<?php echo $profession['id']; ?>">
                                             <i class="fas fa-edit me-1"></i>Изменить оценку
                                         </button>
-                                    <?php endif; ?>
+                                    <?php endif; ?> -->
                                     
                                     <a href="/expert/rate_profession_qualities.php?profession_id=<?php echo $profession['id']; ?>" class="btn btn-outline-success">
                                         <i class="fas fa-clipboard-list me-1"></i>Оценить ПВК
                                     </a>
                                     
-                                    <a href="/profession_pvk.php?id=<?php echo $profession['id']; ?>" class="btn btn-link">
+                                    <a href="/profession.php?id=<?php echo $profession['id']; ?>" class="btn btn-link">
                                         <i class="fas fa-external-link-alt me-1"></i>Просмотр профессии
                                     </a>
                                 </div>
