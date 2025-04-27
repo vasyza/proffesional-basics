@@ -32,8 +32,7 @@ try {
     $stmt = $pdo->prepare("
         SELECT 
             p.id as profession_id,
-            p.title as profession_title,
-            COUNT(pqr.id) as rated_qualities_count
+            p.title as profession_title
         FROM 
             professions p
         JOIN 

@@ -26,13 +26,13 @@ if ($professionId <= 0) {
 
 // Проверка наличия выбранных качеств
 if (empty($qualities) || count($qualities) < 5) {
-    header('Location: /expert/rate_profession_qualities.php?profession_id=' . $professionId . '&error=' . urlencode("Необходимо выбрать минимум 5 качеств"));
+    header('Location: /expert/rate_professional_qualities.php?profession_id=' . $professionId . '&error=' . urlencode("Необходимо выбрать минимум 5 качеств"));
     exit;
 }
 
 // Ограничение количества качеств
 if (count($qualities) > 10) {
-    header('Location: /expert/rate_profession_qualities.php?profession_id=' . $professionId . '&error=' . urlencode("Можно выбрать максимум 10 качеств"));
+    header('Location: /expert/rate_professional_qualities.php?profession_id=' . $professionId . '&error=' . urlencode("Можно выбрать максимум 10 качеств"));
     exit;
 }
 
@@ -89,7 +89,7 @@ try {
     $pdo->commit();
     
     // Перенаправление на страницу успеха
-    header('Location: /expert/rate_profession_qualities.php?profession_id=' . $professionId . '&success=' . urlencode("Ваши оценки успешно сохранены"));
+    header('Location: /expert/rate_professional_qualities.php?profession_id=' . $professionId . '&success=' . urlencode("Ваши оценки успешно сохранены"));
     
 } catch (PDOException $e) {
     // Откат транзакции
@@ -98,7 +98,7 @@ try {
     }
     
     error_log("Ошибка при сохранении оценок ПВК: " . $e->getMessage());
-    header('Location: /expert/rate_profession_qualities.php?profession_id=' . $professionId . '&error=' . urlencode("Ошибка при сохранении оценок: " . $e->getMessage()));
+    header('Location: /expert/rate_professional_qualities.php?profession_id=' . $professionId . '&error=' . urlencode("Ошибка при сохранении оценок: " . $e->getMessage()));
 }
 
 /**
@@ -106,38 +106,59 @@ try {
  * на основе оценок экспертов
  */
 function updateProfessionQualities($pdo, $professionId) {
-    // Удаление существующих связей
-    $stmt = $pdo->prepare("DELETE FROM profession_qualities WHERE profession_id = ?");
-    $stmt->execute([$professionId]);
-    
-    // Получение списка качеств, которые выбрали хотя бы 30% экспертов
+    // Удаление существующих записей для профессии
+    $deleteStmt = $pdo->prepare("DELETE FROM combined_profession_quality_ratings WHERE profession_id = ?");
+    $deleteStmt->execute([$professionId]);
+
+    // Получение качеств, которые выбрали хотя бы 30% экспертов, вместе с их средней оценкой
     $stmt = $pdo->prepare("
+        WITH expert_counts AS (
+            SELECT 
+                quality_id,
+                COUNT(DISTINCT expert_id) AS expert_count,
+                AVG(rating) AS avg_rating
+            FROM 
+                profession_quality_ratings
+            WHERE 
+                profession_id = ?
+            GROUP BY 
+                quality_id
+        ),
+        total_experts_cte AS (
+            SELECT 
+                COUNT(DISTINCT expert_id) AS total_experts
+            FROM 
+                profession_quality_ratings
+            WHERE 
+                profession_id = ?
+        )
         SELECT 
-            quality_id,
-            COUNT(DISTINCT expert_id) as expert_count,
-            (SELECT COUNT(DISTINCT expert_id) FROM profession_quality_ratings WHERE profession_id = ?) as total_experts
+            ec.quality_id,
+            ec.avg_rating
         FROM 
-            profession_quality_ratings 
+            expert_counts ec
+        CROSS JOIN 
+            total_experts_cte te
         WHERE 
-            profession_id = ?
-        GROUP BY 
-            quality_id
-        HAVING 
-            expert_count >= (total_experts * 0.3)
+            ec.expert_count >= (te.total_experts * 0.3)
     ");
-    
+
     $stmt->execute([$professionId, $professionId]);
-    $consensusQualities = $stmt->fetchAll();
-    
-    // Добавление согласованных качеств в сводную таблицу
+    $consensusQualities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Добавление согласованных качеств в таблицу
     if (!empty($consensusQualities)) {
         $insertStmt = $pdo->prepare("
-            INSERT INTO profession_qualities (profession_id, quality_id, created_at)
-            VALUES (?, ?, NOW())
+            INSERT INTO combined_profession_quality_ratings (profession_id, quality_id, average_rating, created_at)
+            VALUES (?, ?, ?, NOW())
         ");
-        
+
         foreach ($consensusQualities as $quality) {
-            $insertStmt->execute([$professionId, $quality['quality_id']]);
+            $insertStmt->execute([
+                $professionId,
+                $quality['quality_id'],
+                round($quality['avg_rating'], 2) // округляем до двух знаков после запятой
+            ]);
         }
     }
 }

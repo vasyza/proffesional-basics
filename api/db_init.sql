@@ -65,7 +65,8 @@ CREATE TABLE profession_quality_ratings (
     expert_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     quality_id INTEGER NOT NULL REFERENCES professional_qualities(id) ON DELETE CASCADE,
     rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 10),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE professional_qualities (
@@ -74,6 +75,14 @@ CREATE TABLE professional_qualities (
     description TEXT,
     category VARCHAR(100)
 );
+
+CREATE TABLE combined_profession_quality_ratings (
+    id SERIAL PRIMARY KEY,
+    profession_id INTEGER NOT NULL REFERENCES professions(id) ON DELETE CASCADE,
+    quality_id INTEGER NOT NULL REFERENCES professional_qualities(id) ON DELETE CASCADE,
+    average_rating FLOAT NOT NULL CHECK (average_rating BETWEEN 1 AND 10) DEFAULT 1.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
 
 CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
