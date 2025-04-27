@@ -36,12 +36,27 @@ CREATE TABLE IF NOT EXISTS consultations (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
     consultant_id INTEGER REFERENCES users(id),
-    status VARCHAR(20) DEFAULT 'pending', -- pending, accepted, completed, cancelled
+    profession_id INTEGER REFERENCES professions(id),
+    status VARCHAR(20) DEFAULT 'pending',
     topic VARCHAR(255) NOT NULL,
     message TEXT,
+    notes TEXT,
+    consultant_notes TEXT,
+    rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+    completion_notes TEXT,
+    user_feedback TEXT,
+    cancel_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     scheduled_at TIMESTAMP,
     completed_at TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS consultants (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    specialization VARCHAR(255) DEFAULT 'Не указана',
+    experience VARCHAR(255) DEFAULT 'Не указан',
+    education VARCHAR(255) DEFAULT 'Не указано',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS student_groups (

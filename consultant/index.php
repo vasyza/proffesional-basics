@@ -1,5 +1,13 @@
 <?php
 session_start();
+?>
+<?php if (isset($_SESSION['db_error'])): ?>
+    <div class="alert alert-danger text-center" style="margin: 0; padding: 1rem; font-weight: bold;">
+        <?php echo htmlspecialchars($_SESSION['db_error']); ?>
+    </div>
+<?php endif; ?>
+<?php
+//session_start();
 require_once '../api/config.php';
 
 // Проверка авторизации и роли консультанта
@@ -96,13 +104,23 @@ try {
         JOIN users u ON c.user_id = u.id
         JOIN professions p ON c.profession_id = p.id
         WHERE c.consultant_id = ? AND c.status = 'scheduled'
-        ORDER BY c.scheduled_date ASC
+        ORDER BY c.scheduled_at ASC
     ");
     $scheduled->execute([$userId]);
     $scheduledConsultations = $scheduled->fetchAll();
 
 } catch (PDOException $e) {
-    $error = "Ошибка базы данных: " . $e->getMessage();
+    //$error = "Ошибка базы данных: " . $e->getMessage();
+    if (isset($_SESSION['db_error'])) {
+        unset($_SESSION['db_error']);
+    }
+    else{
+        $errorMessage = $e->getMessage();
+        $_SESSION['db_error'] = "Ошибка базы данных: " . $errorMessage;
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit;
+    }
+    
 }
 ?>
 <!DOCTYPE html>
