@@ -17,7 +17,7 @@ if ($professionId <= 0) {
 try {
     $pdo = getDbConnection();
 
-    // Получение данных о профессии
+    //Получение данных о профессии
     $stmt = $pdo->prepare("
         SELECT p.*, 
                COUNT(DISTINCT er.id) as ratings_count,
@@ -37,17 +37,28 @@ try {
         exit;
     }
 
-    // Получение отзывов экспертов
+    // Получение профессионально важных качеств для данной профессии
     $stmt = $pdo->prepare("
-        SELECT er.*, u.name as expert_name
-        FROM expert_ratings er
-        JOIN users u ON er.expert_id = u.id
-        WHERE er.profession_id = :profession_id
-        ORDER BY er.created_at DESC
-    ");
-    $stmt->bindParam(':profession_id', $professionId);
-    $stmt->execute();
-    $expertRatings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    SELECT pq.name, cpqr.average_rating
+    FROM combined_profession_quality_ratings cpqr
+    JOIN professional_qualities pq ON cpqr.quality_id = pq.id
+    WHERE cpqr.profession_id = ?
+    ORDER BY cpqr.average_rating DESC
+");
+    $stmt->execute([$professionId]);
+    $professionQualities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Получение отзывов экспертов
+    // $stmt = $pdo->prepare("
+    //     SELECT er.*, u.name as expert_name
+    //     FROM expert_ratings er
+    //     JOIN users u ON er.expert_id = u.id
+    //     WHERE er.profession_id = :profession_id
+    //     ORDER BY er.created_at DESC
+    // ");
+    // $stmt->bindParam(':profession_id', $professionId);
+    // $stmt->execute();
+    // $expertRatings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     die("Ошибка получения данных: " . $e->getMessage());
@@ -92,7 +103,7 @@ try {
                     <?php if (!empty($profession['salary_range'])): ?>
                         <span class="badge bg-info text-dark">
                             <i class="fas fa-money-bill-wave me-1"></i>
-                            <?php echo htmlspecialchars($profession['salary_range']); ?>
+                            <?php echo htmlspecialchars('Зарплата ' . $profession['salary_range']); ?>
                         </span>
                     <?php endif; ?>
 
@@ -138,16 +149,25 @@ try {
                     </div>
                 </div>
 
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h2 class="h5 mb-0">Необходимые навыки</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><?php echo nl2br(htmlspecialchars($profession['skills'])); ?></p>
-                    </div>
+                <div class="card-body">
+                    <?php if (!empty($professionQualities)): ?>
+                        <hr>
+                        <h3 class="h6 mt-4">Профессионально важные качества:</h3>
+                        <ul class="list-unstyled">
+                            <?php foreach ($professionQualities as $quality): ?>
+                                <li>
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <?php echo htmlspecialchars($quality['name']); ?>
+                                    <small class="text-muted ms-2">(средняя оценка: <?php echo number_format($quality['average_rating'], 1); ?>/10)</small>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p class="text-muted mt-4">Нет выбранных качеств для этой профессии.</p>
+                    <?php endif; ?>
                 </div>
 
-                <?php if (count($expertRatings) > 0): ?>
+                <!-- <?php if (count($expertRatings) > 0): ?>
                     <div class="card mb-4">
                         <div class="card-header">
                             <h2 class="h5 mb-0">Оценки экспертов (<?php echo count($expertRatings); ?>)</h2>
@@ -177,7 +197,7 @@ try {
                             </ul>
                         </div>
                     </div>
-                <?php endif; ?>
+                <?php endif; ?> -->
             </div>
 
             <div class="col-lg-4">
@@ -215,14 +235,14 @@ try {
                     </div>
                 </div>
 
-                <?php if (!empty($profession['image_path'])): ?>
+                <!-- <?php if (!empty($profession['image_path'])): ?>
                     <div class="card mb-4">
                         <div class="card-body p-0">
                             <img src="<?php echo htmlspecialchars($profession['image_path']); ?>"
                                 alt="<?php echo htmlspecialchars($profession['title']); ?>" class="img-fluid rounded">
                         </div>
                     </div>
-                <?php endif; ?>
+                <?php endif; ?> -->
             </div>
         </div>
     </div>

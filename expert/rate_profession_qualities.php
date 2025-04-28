@@ -70,7 +70,7 @@ try {
     
 } catch (PDOException $e) {
     error_log("Ошибка при получении данных о профессии и ПВК: " . $e->getMessage());
-    header('Location: /expert/index.php?error=' . urlencode('Ошибка при получении данных'));
+    header('Location: /expert/index.php?error=' . urlencode('Ошибка при получении данных: ' . $e->getMessage()));
     exit;
 }
 ?>

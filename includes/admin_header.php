@@ -47,11 +47,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fas fa-clipboard-list me-1"></i>ПВК
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link <?php echo $current_page == 'manage_groups.php' ? 'active' : ''; ?>" href="/admin/manage_groups.php">
                         <i class="fas fa-users-cog me-1"></i>Рабочие группы
                     </a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link <?php echo $current_page == 'consultations.php' ? 'active' : ''; ?>" href="/admin/consultations.php">
                         <i class="fas fa-comments me-1"></i>Консультации

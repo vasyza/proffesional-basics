@@ -12,7 +12,7 @@
                     <ul class="list-unstyled">
                         <li><a href="/" class="text-white">Главная</a></li>
                         <li><a href="/professions.php" class="text-white">Каталог профессий</a></li>
-                        <li><a href="/groups.php" class="text-white">Рабочие группы</a></li>
+                        <!-- <li><a href="/groups.php" class="text-white">Рабочие группы</a></li> -->
                     </ul>
                 </div>
                 <div class="col-md-3">

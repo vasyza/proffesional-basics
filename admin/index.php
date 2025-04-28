@@ -83,9 +83,9 @@ try {
                     <li class="nav-item">
                         <a class="nav-link" href="/professions.php">Каталог профессий</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/groups.php">Рабочие группы</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div class="navbar-nav">
                     <div class="nav-item dropdown">
@@ -98,7 +98,7 @@ try {
                             <li><a class="dropdown-item" href="/admin/users.php">Пользователи</a></li>
                             <li><a class="dropdown-item" href="/admin/professions.php">Профессии</a></li>
                             <li><a class="dropdown-item" href="/admin/consultations.php">Консультации</a></li>
-                            <li><a class="dropdown-item" href="/admin/manage_groups.php">Группы</a></li>
+                            <!-- <li><a class="dropdown-item" href="/admin/manage_groups.php">Группы</a></li> -->
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -186,7 +186,7 @@ try {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <!-- <div class="col-md-3">
                 <div class="card bg-warning text-dark mb-3">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -205,7 +205,7 @@ try {
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="row">
@@ -329,7 +329,7 @@ try {
                     <ul class="list-unstyled">
                         <li><a href="/" class="text-white">Главная</a></li>
                         <li><a href="/professions.php" class="text-white">Каталог профессий</a></li>
-                        <li><a href="/groups.php" class="text-white">Рабочие группы</a></li>
+                        <!-- <li><a href="/groups.php" class="text-white">Рабочие группы</a></li> -->
                     </ul>
                 </div>
                 <div class="col-md-3">

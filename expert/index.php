@@ -14,7 +14,7 @@ $userName = $_SESSION['user_name'];
 // Подключение к базе данных
 try {
     $pdo = getDbConnection();
-    
+
     // Получаем данные о профессиях, которые можно оценить
     $stmt = $pdo->prepare("
         SELECT p.*, 
@@ -27,13 +27,12 @@ try {
     ");
     $stmt->execute([$userId]);
     $professions = $stmt->fetchAll();
-    
+
     // Получаем данные о ПВК, оцененных экспертом
     $stmt = $pdo->prepare("
         SELECT 
             p.id as profession_id,
-            p.title as profession_title,
-            COUNT(pqr.id) as rated_qualities_count
+            p.title as profession_title
         FROM 
             professions p
         JOIN 
@@ -45,7 +44,7 @@ try {
     ");
     $stmt->execute([$userId]);
     $ratedPvkProfessions = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-    
+
     // Получаем статистику оценок эксперта
     $stmt = $pdo->prepare("
         SELECT 
@@ -63,13 +62,14 @@ try {
     ");
     $stmt->execute([$userId]);
     $expertStats = $stmt->fetch();
-    
 } catch (PDOException $e) {
     die("Ошибка получения данных: " . $e->getMessage());
 }
+$recent_ratings = [];
 ?>
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,17 +84,17 @@ try {
             padding: 20px;
             margin-bottom: 20px;
         }
-        
+
         .rating-stars {
             font-size: 24px;
             color: #ffc107;
             cursor: pointer;
         }
-        
+
         .rating-stars .star {
             margin-right: 5px;
         }
-        
+
         .expert-card {
             background-color: #fff;
             border-radius: 10px;
@@ -102,60 +102,61 @@ try {
             padding: 20px;
             margin-bottom: 20px;
         }
-        
+
         .expert-stats {
             display: flex;
             justify-content: space-between;
             margin-top: 15px;
         }
-        
+
         .stat-item {
             text-align: center;
             flex: 1;
         }
-        
+
         .stat-value {
             font-size: 24px;
             font-weight: bold;
             color: #0d6efd;
         }
-        
+
         .profession-list {
             margin-top: 30px;
         }
-        
+
         .profession-card {
             margin-bottom: 15px;
             border-radius: 10px;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             transition: transform 0.3s;
         }
-        
+
         .profession-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .rated-profession {
             border-left: 4px solid #198754;
         }
-        
+
         .rating-badge {
             position: absolute;
             top: 10px;
             right: 10px;
             font-size: 1.2rem;
         }
-        
+
         .task-card {
             border-left: 4px solid #007bff;
         }
-        
+
         .task-card.completed {
             border-left-color: #28a745;
             background-color: rgba(40, 167, 69, 0.05);
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
@@ -172,7 +173,7 @@ try {
                         <a class="nav-link" href="/professions.php">Каталог профессий</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/groups.php">Рабочие группы</a>
+                        <a class="nav-link" href="/experts.php">Наши эксперты</a>
                     </li>
                 </ul>
                 <div class="navbar-nav">
@@ -183,7 +184,9 @@ try {
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/cabinet.php">Профиль</a></li>
                             <li><a class="dropdown-item active" href="/expert/index.php">Панель эксперта</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" href="/auth/logout.php">Выход</a></li>
                         </ul>
                     </div>
@@ -194,17 +197,20 @@ try {
 
     <div class="container mt-5">
         <h1 class="mb-4">Панель эксперта</h1>
-        
+
         <div class="row">
             <div class="col-md-4">
                 <!-- Карточка эксперта -->
                 <div class="expert-card">
                     <h2>Здравствуйте, <?php echo htmlspecialchars($userName); ?>!</h2>
-                    <p>Ваша специализация: <strong><?php echo htmlspecialchars($expert_data['specialization'] ?? 'Не указана'); ?></strong></p>
-                    <p>Опыт работы: <strong><?php echo htmlspecialchars($expert_data['experience'] ?? 'Не указан'); ?></strong></p>
-                    <p>Образование: <strong><?php echo htmlspecialchars($expert_data['education'] ?? 'Не указано'); ?></strong></p>
-                    
-                    <div class="expert-stats">
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="/expert/pvk_list.php" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-list me-1"></i> Просмотреть ПВК
+                        </a>
+                    </div>
+
+                    <!-- <div class="expert-stats">
                         <div class="stat-item">
                             <div class="stat-value"><?php echo intval($expert_data['ratings_count'] ?? 0); ?></div>
                             <div class="stat-label">Оценок</div>
@@ -213,11 +219,11 @@ try {
                             <div class="stat-value"><?php echo number_format($expert_data['avg_rating'] ?? 0, 1); ?></div>
                             <div class="stat-label">Средняя оценка</div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
-                
+
                 <!-- Последние оценки -->
-                <div class="expert-card">
+                <!-- <div class="expert-card">
                     <h3>Ваши последние оценки</h3>
                     <?php if (count($recent_ratings) > 0): ?>
                         <ul class="list-group">
@@ -238,12 +244,12 @@ try {
                     <?php else: ?>
                         <p class="text-muted">У вас пока нет оценок.</p>
                     <?php endif; ?>
-                </div>
+                </div> -->
             </div>
-            
+
             <div class="col-md-8">
                 <h2 class="mb-4">Профессии для оценки</h2>
-                
+
                 <!-- Список профессий -->
                 <div class="profession-list">
                     <?php foreach ($professions as $profession): ?>
@@ -263,14 +269,14 @@ try {
                                         </div>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <p class="card-text text-truncate"><?php echo htmlspecialchars($profession['description']); ?></p>
-                                
+
                                 <div class="d-flex justify-content-between mt-auto">
                                     <span class="badge bg-secondary">
-                                        <?php echo htmlspecialchars($profession['category']); ?>
+                                        <?php echo htmlspecialchars($profession['type']); ?>
                                     </span>
-                                    
+
                                     <?php if (isset($ratedPvkProfessions[$profession['id']])): ?>
                                         <span class="badge bg-success">
                                             <i class="fas fa-check-circle me-1"></i>
@@ -283,9 +289,9 @@ try {
                                         </span>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <div class="mt-3 d-grid gap-2">
-                                    <?php if (!$profession['is_rated']): ?>
+                                    <!-- <?php if (!$profession['is_rated']): ?>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rateModal<?php echo $profession['id']; ?>">
                                             <i class="fas fa-star me-1"></i>Оценить профессию
                                         </button>
@@ -293,13 +299,13 @@ try {
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#rateModal<?php echo $profession['id']; ?>">
                                             <i class="fas fa-edit me-1"></i>Изменить оценку
                                         </button>
-                                    <?php endif; ?>
-                                    
+                                    <?php endif; ?> -->
+
                                     <a href="/expert/rate_profession_qualities.php?profession_id=<?php echo $profession['id']; ?>" class="btn btn-outline-success">
                                         <i class="fas fa-clipboard-list me-1"></i>Оценить ПВК
                                     </a>
-                                    
-                                    <a href="/profession_pvk.php?id=<?php echo $profession['id']; ?>" class="btn btn-link">
+
+                                    <a href="/profession.php?id=<?php echo $profession['id']; ?>" class="btn btn-link">
                                         <i class="fas fa-external-link-alt me-1"></i>Просмотр профессии
                                     </a>
                                 </div>
@@ -349,17 +355,17 @@ try {
             <?php foreach ($professions as $profession): ?>
                 const stars<?php echo $profession['id']; ?> = document.querySelectorAll('#ratingForm<?php echo $profession['id']; ?> .star');
                 const ratingInput<?php echo $profession['id']; ?> = document.getElementById('rating<?php echo $profession['id']; ?>');
-                
+
                 stars<?php echo $profession['id']; ?>.forEach(star => {
                     star.addEventListener('click', () => {
                         const value = parseInt(star.getAttribute('data-value'));
                         ratingInput<?php echo $profession['id']; ?>.value = value;
-                        
+
                         // Обновляем отображение звезд
                         stars<?php echo $profession['id']; ?>.forEach(s => {
                             const starValue = parseInt(s.getAttribute('data-value'));
                             const starIcon = s.querySelector('i');
-                            
+
                             if (starValue <= value) {
                                 starIcon.classList.remove('text-muted');
                             } else {
@@ -372,4 +378,5 @@ try {
         });
     </script>
 </body>
-</html> 
+
+</html>

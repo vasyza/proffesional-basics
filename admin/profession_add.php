@@ -34,8 +34,8 @@ include_once '../includes/admin_header.php';
                 </div>
                 
                 <div class="mb-3">
-                    <label for="category" class="form-label">Категория</label>
-                    <input type="text" class="form-control" id="category" name="category">
+                    <label for="type" class="form-label">Категория</label>
+                    <input type="text" class="form-control" id="type" name="type">
                     <div class="form-text">Например: Разработка, Аналитика, Тестирование, Менеджмент и т.д.</div>
                 </div>
                 
@@ -44,7 +44,7 @@ include_once '../includes/admin_header.php';
                     <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
                 </div>
                 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="requirements" class="form-label">Требования</label>
                     <textarea class="form-control" id="requirements" name="requirements" rows="5"></textarea>
                     <div class="form-text">Опишите необходимые навыки, знания и компетенции для данной профессии.</div>
@@ -54,7 +54,7 @@ include_once '../includes/admin_header.php';
                     <label for="duties" class="form-label">Обязанности</label>
                     <textarea class="form-control" id="duties" name="duties" rows="5"></textarea>
                     <div class="form-text">Опишите основные задачи и обязанности специалиста данной профессии.</div>
-                </div>
+                </div> -->
                 
                 <div class="mb-3">
                     <label for="salary_range" class="form-label">Диапазон зарплат</label>

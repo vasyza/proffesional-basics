@@ -30,7 +30,7 @@ if (empty($data)) {
 }
 
 // Проверка наличия обязательных полей
-$requiredFields = ['title', 'description', 'skills', 'type'];
+$requiredFields = ['title', 'description', 'type'];
 $missingFields = [];
 
 foreach ($requiredFields as $field) {
@@ -62,7 +62,7 @@ try {
     // Привязка параметров
     $stmt->bindParam(':title', $data['title']);
     $stmt->bindParam(':description', $data['description']);
-    $stmt->bindParam(':skills', $data['skills']);
+    //$stmt->bindParam(':skills', $data['skills']);
     $stmt->bindParam(':type', $data['type']);
 
     // Необязательные поля
@@ -78,17 +78,23 @@ try {
     $createdBy = $_SESSION['user_id'];
     $stmt->bindParam(':created_by', $createdBy);
 
+    $skills = isset($data['skills']) ? $data['skills'] : null;
+    $stmt->bindParam(':skills', $data['skills']);
+
     // Выполнение запроса
     $stmt->execute();
 
     // Получение ID созданной профессии
     $newProfessionId = $stmt->fetchColumn();
 
-    echo json_encode([
-        'success' => true,
-        'message' => 'Профессия успешно добавлена',
-        'profession_id' => $newProfessionId
-    ]);
+    header('Location: /admin/index.php?success=' . urlencode("Профессия успешно добавлена!"));
+    exit;
+
+    // echo json_encode([
+    //     'success' => true,
+    //     'message' => 'Профессия успешно добавлена',
+    //     'profession_id' => $newProfessionId
+    // ]);
 
 } catch (PDOException $e) {
     echo json_encode([

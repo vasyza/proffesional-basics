@@ -28,14 +28,14 @@ try {
     }
 
     // Получаем группы пользователя
-    $stmt = $pdo->prepare("
-        SELECT sg.id, sg.name, gm.role
-        FROM student_groups sg
-        JOIN group_members gm ON sg.id = gm.group_id
-        WHERE gm.user_id = ?
-    ");
-    $stmt->execute([$userId]);
-    $user_groups = $stmt->fetchAll();
+    // $stmt = $pdo->prepare("
+    //     SELECT sg.id, sg.name, gm.role
+    //     FROM student_groups sg
+    //     JOIN group_members gm ON sg.id = gm.group_id
+    //     WHERE gm.user_id = ?
+    // ");
+    // $stmt->execute([$userId]);
+    // $user_groups = $stmt->fetchAll();
 
     // Для экспертов - получаем их оценки профессий
     $expert_ratings = [];
@@ -75,7 +75,6 @@ try {
         $stmt->execute([$userId]);
         $consultations = $stmt->fetchAll();
     }
-
 } catch (PDOException $e) {
     die("Ошибка при подключении к базе данных: " . $e->getMessage());
 }
@@ -128,32 +127,6 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
-
-            <?php if ($user_groups && count($user_groups) > 0): ?>
-                <div class="card mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0">Мои группы</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <?php foreach ($user_groups as $group): ?>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <a href="/groups.php?id=<?php echo $group['id']; ?>" class="text-decoration-none">
-                                        <?php echo htmlspecialchars($group['name']); ?>
-                                    </a>
-                                    <span
-                                        class="badge bg-primary rounded-pill"><?php echo htmlspecialchars($group['role']); ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <div class="card-footer bg-white">
-                        <a href="/groups.php" class="btn btn-primary btn-sm w-100">
-                            <i class="fas fa-users me-1"></i> Все группы
-                        </a>
-                    </div>
-                </div>
-            <?php endif; ?>
         </div>
 
         <div class="col-md-8">
@@ -169,6 +142,10 @@ include 'includes/header.php';
                     <div class="row mb-3">
                         <div class="col-md-4 fw-bold">Логин:</div>
                         <div class="col-md-8"><?php echo htmlspecialchars($user['login']); ?></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">О себе:</div>
+                        <div class="col-md-8"><?php echo htmlspecialchars('' . $user['bio']); ?></div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4 fw-bold">Роль:</div>
@@ -199,7 +176,13 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
-
+            <?php if ($userRole != 'consultant'): ?>
+                <div class="card-footer bg-white">
+                    <a href="/request_consultation.php" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i> Запросить новую консультацию
+                    </a>
+                </div>
+            <?php endif; ?>
             <?php if (count($consultations) > 0): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
@@ -272,13 +255,7 @@ include 'includes/header.php';
                             </table>
                         </div>
                     </div>
-                    <?php if ($userRole != 'consultant'): ?>
-                        <div class="card-footer bg-white">
-                            <a href="/consultations.php" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus me-1"></i> Запросить новую консультацию
-                            </a>
-                        </div>
-                    <?php endif; ?>
+
                 </div>
             <?php endif; ?>
 
@@ -354,12 +331,12 @@ include 'includes/header.php';
                                     Управление консультациями
                                 </a>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <!-- <div class="col-md-6 mb-3">
                                 <a href="/admin/manage_groups.php" class="btn btn-outline-primary btn-lg w-100">
                                     <i class="fas fa-user-friends me-2"></i>
                                     Управление группами
                                 </a>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

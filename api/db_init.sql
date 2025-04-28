@@ -5,8 +5,10 @@ CREATE TABLE IF NOT EXISTS users (
     login VARCHAR(90) NOT NULL UNIQUE,
     name VARCHAR(50) NOT NULL,
     pass VARCHAR(255) NOT NULL,
+    bio TEXT,
     role VARCHAR(20) NOT NULL DEFAULT 'user', -- user, admin, expert, consultant
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE IF NOT EXISTS professions (
@@ -14,7 +16,7 @@ CREATE TABLE IF NOT EXISTS professions (
     title VARCHAR(100) NOT NULL,
     type VARCHAR(50) DEFAULT 'Не указана' NOT NULL,
     description TEXT NOT NULL,
-    skills TEXT NOT NULL,
+    skills TEXT DEFAULT 'Не указаны',
     salary_range VARCHAR(100),
     demand_level INTEGER, -- от 1 до 5
     image_path VARCHAR(255),
@@ -36,12 +38,28 @@ CREATE TABLE IF NOT EXISTS consultations (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
     consultant_id INTEGER REFERENCES users(id),
-    status VARCHAR(20) DEFAULT 'pending', -- pending, accepted, completed, cancelled
+    profession_id INTEGER REFERENCES professions(id),
+    status VARCHAR(20) DEFAULT 'pending',
     topic VARCHAR(255) NOT NULL,
     message TEXT,
+    notes TEXT,
+    consultant_notes TEXT,
+    rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+    completion_notes TEXT,
+    user_feedback TEXT,
+    cancel_reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     scheduled_at TIMESTAMP,
-    completed_at TIMESTAMP
+    completed_at TIMESTAMP,
+    duration INTEGER, -- in minutes
+);
+CREATE TABLE IF NOT EXISTS consultants (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    specialization VARCHAR(255) DEFAULT 'Не указана',
+    experience VARCHAR(255) DEFAULT 'Не указан',
+    education VARCHAR(255) DEFAULT 'Не указано',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS student_groups (
@@ -58,6 +76,31 @@ CREATE TABLE IF NOT EXISTS group_members (
     role VARCHAR(50) NOT NULL, -- leader, developer, designer, etc.
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE profession_quality_ratings (
+    id SERIAL PRIMARY KEY,
+    profession_id INTEGER NOT NULL REFERENCES professions(id) ON DELETE CASCADE,
+    expert_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    quality_id INTEGER NOT NULL REFERENCES professional_qualities(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE professional_qualities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(100)
+);
+
+CREATE TABLE combined_profession_quality_ratings (
+    id SERIAL PRIMARY KEY,
+    profession_id INTEGER NOT NULL REFERENCES professions(id) ON DELETE CASCADE,
+    quality_id INTEGER NOT NULL REFERENCES professional_qualities(id) ON DELETE CASCADE,
+    average_rating FLOAT NOT NULL CHECK (average_rating BETWEEN 1 AND 10) DEFAULT 1.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
 
 CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);

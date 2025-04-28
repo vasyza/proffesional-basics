@@ -171,7 +171,7 @@ try {
     error_log("Ошибка при обновлении консультации: " . $e->getMessage());
     
     // Перенаправление с сообщением об ошибке
-    header('Location: /consultant/index.php?error=' . urlencode("Произошла ошибка при обновлении консультации. Пожалуйста, попробуйте позже."));
+    header('Location: /consultant/index.php?error=' . urlencode("Произошла ошибка при обновлении консультации. Пожалуйста, попробуйте позже." . $e->getMessage()));
     exit();
 }
 ?> 
