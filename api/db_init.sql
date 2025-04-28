@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS consultations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     scheduled_at TIMESTAMP,
-    completed_at TIMESTAMP
+    completed_at TIMESTAMP,
+    duration INTEGER, -- in minutes
 );
 CREATE TABLE IF NOT EXISTS consultants (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,

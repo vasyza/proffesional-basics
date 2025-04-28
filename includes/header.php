@@ -57,6 +57,9 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : '';
                     <li class="nav-item">
                         <a class="nav-link" href="/professions.php">Каталог профессий</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/experts.php">Наши эксперты</a>
+                    </li>
                     <!-- <li class="nav-item">
                         <a class="nav-link" href="/groups.php">Рабочие группы</a>
                     </li> -->

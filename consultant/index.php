@@ -109,6 +109,30 @@ try {
     $scheduled->execute([$userId]);
     $scheduledConsultations = $scheduled->fetchAll();
 
+    // Получение завершённых консультаций
+    $completed = $pdo->prepare("
+        SELECT c.*, u.name as user_name, p.title as profession_title 
+        FROM consultations c
+        JOIN users u ON c.user_id = u.id
+        JOIN professions p ON c.profession_id = p.id
+        WHERE c.consultant_id = ? AND c.status = 'completed'
+        ORDER BY c.scheduled_at ASC
+    ");
+    $completed->execute([$userId]);
+    $completedConsultations = $completed->fetchAll();
+
+    // Получение отменённых консультаций
+    $cancelled = $pdo->prepare("
+        SELECT c.*, u.name as user_name, p.title as profession_title 
+        FROM consultations c
+        JOIN users u ON c.user_id = u.id
+        JOIN professions p ON c.profession_id = p.id
+        WHERE c.consultant_id = ? AND c.status = 'cancelled'
+        ORDER BY c.scheduled_at ASC
+    ");
+    $cancelled->execute([$userId]);
+    $cancelledConsultations = $cancelled->fetchAll();
+
 } catch (PDOException $e) {
     //$error = "Ошибка базы данных: " . $e->getMessage();
     if (isset($_SESSION['db_error'])) {
@@ -299,9 +323,9 @@ try {
                 <!-- Календарь консультаций -->
                 <div class="consultant-card">
                     <h3>Ближайшие консультации</h3>
-                    <?php if (count($consultations) > 0): ?>
+                    <?php if (count($scheduledConsultations) > 0): ?>
                         <ul class="list-group">
-                            <?php foreach (array_slice($consultations, 0, 3) as $consultation): ?>
+                            <?php foreach (array_slice($scheduledConsultations, 0, 3) as $consultation): ?>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong><?php echo htmlspecialchars($consultation['topic']); ?></strong>
@@ -310,7 +334,7 @@ try {
                                         </small>
                                     </div>
                                     <span class="badge bg-info rounded-pill">
-                                        <?php echo date('d.m.Y H:i', strtotime($consultation['created_at'])); ?>
+                                        <?php echo date('d.m.Y H:i', strtotime($consultation['scheduled_at'])); ?>
                                     </span>
                                 </li>
                             <?php endforeach; ?>
@@ -352,25 +376,25 @@ try {
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="pending-tab" data-bs-toggle="tab" href="#pending" role="tab"
                             aria-controls="pending" aria-selected="true">
-                            Ожидают (<?php echo count($consultations); ?>)
+                            Ожидают (<?php echo count($pendingConsultations); ?>)
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="scheduled-tab" data-bs-toggle="tab" href="#scheduled" role="tab"
                             aria-controls="scheduled" aria-selected="false">
-                            Запланированные (<?php echo count($consultations); ?>)
+                            Запланированные (<?php echo count($scheduledConsultations); ?>)
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="completed-tab" data-bs-toggle="tab" href="#completed" role="tab"
                             aria-controls="completed" aria-selected="false">
-                            Завершенные (<?php echo count($history); ?>)
+                            Завершенные (<?php echo count($completedConsultations); ?>)
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="cancelled-tab" data-bs-toggle="tab" href="#cancelled" role="tab"
                             aria-controls="cancelled" aria-selected="false">
-                            Отмененные (<?php echo count($history); ?>)
+                            Отмененные (<?php echo count($cancelledConsultations); ?>)
                         </a>
                     </li>
                 </ul>
@@ -378,8 +402,8 @@ try {
                 <div class="tab-content" id="consultationTabsContent">
                     <!-- Ожидающие консультации -->
                     <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-                        <?php if (count($consultations) > 0): ?>
-                            <?php foreach ($consultations as $consultation): ?>
+                        <?php if (count($pendingConsultations) > 0): ?>
+                            <?php foreach ($pendingConsultations as $consultation): ?>
                                 <div class="card consultation-card consultation-pending">
                                     <div class="consultation-header">
                                         <div class="d-flex justify-content-between align-items-center">
@@ -392,8 +416,6 @@ try {
                                             <div class="col-md-6">
                                                 <p><strong>Студент:</strong>
                                                     <?php echo htmlspecialchars($consultation['user_name']); ?></p>
-                                                <p><strong>Логин:</strong>
-                                                    <?php echo htmlspecialchars($consultation['user_login']); ?></p>
                                                 <p><strong>Дата запроса:</strong>
                                                     <?php echo date('d.m.Y H:i', strtotime($consultation['created_at'])); ?></p>
                                             </div>
@@ -401,7 +423,7 @@ try {
                                                 <p><strong>Тема:</strong>
                                                     <?php echo htmlspecialchars($consultation['topic']); ?></p>
                                                 <p><strong>Описание:</strong></p>
-                                                <p><?php echo nl2br(htmlspecialchars($consultation['notes'])); ?></p>
+                                                <p><?php echo nl2br(htmlspecialchars($consultation['message'])); ?></p>
                                             </div>
                                         </div>
                                         <hr>
@@ -488,8 +510,8 @@ try {
 
                     <!-- Запланированные консультации -->
                     <div class="tab-pane fade" id="scheduled" role="tabpanel" aria-labelledby="scheduled-tab">
-                        <?php if (count($consultations) > 0): ?>
-                            <?php foreach ($consultations as $consultation): ?>
+                        <?php if (count($scheduledConsultations) > 0): ?>
+                            <?php foreach ($scheduledConsultations as $consultation): ?>
                                 <div class="card consultation-card consultation-scheduled">
                                     <div class="consultation-header">
                                         <div class="d-flex justify-content-between align-items-center">
@@ -502,10 +524,8 @@ try {
                                             <div class="col-md-6">
                                                 <p><strong>Студент:</strong>
                                                     <?php echo htmlspecialchars($consultation['user_name']); ?></p>
-                                                <p><strong>Логин:</strong>
-                                                    <?php echo htmlspecialchars($consultation['user_login']); ?></p>
                                                 <p><strong>Дата и время:</strong> <span
-                                                        class="text-primary"><?php echo date('d.m.Y H:i', strtotime($consultation['created_at'])); ?></span>
+                                                        class="text-primary"><?php echo date('d.m.Y H:i', strtotime($consultation['scheduled_at'])); ?></span>
                                                 </p>
                                                 <p><strong>Длительность:</strong>
                                                     <?php echo htmlspecialchars($consultation['duration']); ?> минут</p>
@@ -514,7 +534,7 @@ try {
                                                 <p><strong>Тема:</strong>
                                                     <?php echo htmlspecialchars($consultation['topic']); ?></p>
                                                 <p><strong>Описание от студента:</strong></p>
-                                                <p><?php echo nl2br(htmlspecialchars($consultation['notes'])); ?></p>
+                                                <p><?php echo nl2br(htmlspecialchars($consultation['message'])); ?></p>
                                                 <?php if (!empty($consultation['consultant_notes'])): ?>
                                                     <p><strong>Ваш комментарий:</strong></p>
                                                     <p><?php echo nl2br(htmlspecialchars($consultation['consultant_notes'])); ?></p>
@@ -616,8 +636,8 @@ try {
 
                     <!-- Завершенные консультации -->
                     <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
-                        <?php if (count($history) > 0): ?>
-                            <?php foreach ($history as $consultation): ?>
+                        <?php if (count($completedConsultations) > 0): ?>
+                            <?php foreach ($completedConsultations as $consultation): ?>
                                 <div class="card consultation-card consultation-completed mb-3">
                                     <div class="consultation-header">
                                         <div class="d-flex justify-content-between align-items-center">
@@ -630,8 +650,6 @@ try {
                                             <div class="col-md-6">
                                                 <p><strong>Студент:</strong>
                                                     <?php echo htmlspecialchars($consultation['user_name']); ?></p>
-                                                <p><strong>Логин:</strong>
-                                                    <?php echo htmlspecialchars($consultation['user_login']); ?></p>
                                                 <p><strong>Дата проведения:</strong>
                                                     <?php echo date('d.m.Y H:i', strtotime($consultation['completed_at'])); ?>
                                                 </p>
@@ -668,8 +686,8 @@ try {
 
                     <!-- Отмененные консультации -->
                     <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
-                        <?php if (count($history) > 0): ?>
-                            <?php foreach ($history as $consultation): ?>
+                        <?php if (count($cancelledConsultations) > 0): ?>
+                            <?php foreach ($cancelledConsultations as $consultation): ?>
                                 <div class="card consultation-card consultation-cancelled mb-3">
                                     <div class="consultation-header">
                                         <div class="d-flex justify-content-between align-items-center">
@@ -682,8 +700,6 @@ try {
                                             <div class="col-md-6">
                                                 <p><strong>Студент:</strong>
                                                     <?php echo htmlspecialchars($consultation['user_name']); ?></p>
-                                                <p><strong>Логин:</strong>
-                                                    <?php echo htmlspecialchars($consultation['user_login']); ?></p>
                                                 <p><strong>Дата запроса:</strong>
                                                     <?php echo date('d.m.Y H:i', strtotime($consultation['created_at'])); ?></p>
                                                 <?php if ($consultation['scheduled_at']): ?>

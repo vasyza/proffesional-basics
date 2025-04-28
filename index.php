@@ -134,6 +134,104 @@ include 'includes/header.php';
     </div>
 </div>
 
+<hr class="my-5">
+
+<!-- Команда проекта -->
+<div class="container mb-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-users me-2"></i> Команда проекта</h5>
+        </div>
+        <div class="card-body">
+            <div class="row gy-4">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Лаукканен Эрик Константинович</h6>
+                            <p class="mb-0 text-muted small">Тестировщик</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Яременко Владимир Михайлович</h6>
+                            <p class="mb-0 text-muted small">Главный программист и дизайнер</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-danger"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Деро Давид Андреевич</h6>
+                            <p class="mb-0 text-muted small">Тестировщик</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-warning"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Сухачев Владимир Павлович</h6>
+                            <p class="mb-0 text-muted small">Тестировщик</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Кульдпере Андрей Игоревич</h6>
+                            <p class="mb-0 text-muted small">Дополнительный программист, тестировщик</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-secondary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Кабиров Данияр Умарович</h6>
+                            <p class="mb-0 text-muted small">Тестировщик</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-user-circle fa-2x text-dark"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Аникин Максим Иванович</h6>
+                            <p class="mb-0 text-muted small">Тестировщик</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 // Подключение подвала
 include 'includes/footer.php';
