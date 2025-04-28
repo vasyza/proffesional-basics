@@ -1,0 +1,230 @@
+
+
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integer
+authorization:
+sidimekov vgmkscir
+Неверный пароль
+
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integer
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integer
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integer
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integer
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integerSQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "opd_users" violates foreign key constraint "opd_users_gender_id_fkey"
+DETAIL:  Key (gender_id)=(1) is not present in table "opd_genders".
+registration:
+Дмитрий sidimekov vgmkscir vgmkscir 1 2006-01-31
+integerArrayregister.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+registration:
+test test test test 1 2000-01-01
+integerSQLSTATE[42601]: Syntax error: 7 ERROR:  syntax error at or near "DUPLICATE"
+LINE 1: ...te, gender_id) VALUES ($1, $2, $3, $4, $5, $6) ON DUPLICATE ...
+                                                             ^
+registration:
+test test test test 1 2000-01-09
+integerSQLSTATE[42601]: Syntax error: 7 ERROR:  syntax error at or near "DUPLICATE"
+LINE 1: ...te, gender_id) VALUES ($1, $2, $3, $4, $5, $6) ON DUPLICATE ...
+                                                             ^
+registration:
+test test test test 1 2000-01-01
+integerArrayregister.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+registration:
+kostya rosh.28@mail.ru Qfc12erty Qfc12erty 1 2004-09-28
+integerArrayregister.
+
+registration:
+Vasyan1861 vasyok1488 qwerty qwerty 1 2024-05-29
+integerArrayregister.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+vasyok1488 qwerty
+6 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+registration:
+    1 
+integerПустое имя! Пустой логин! Пустой пароль!
+
+authorization:
+ 
+Пустой login! Пустой пароль!
+
+authorization:
+leias19 19022006
+Неверный пароль
+
+authorization:
+leias19 19022006
+Неверный пароль
+
+authorization:
+leias19 19022006
+Неверный пароль
+
+registration:
+л leias19 19022006 19022006 2 2006-02-19
+integerArrayregister.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+registration:
+Polina mep nojruv-zagMib-pofsa5 nojruv-zagMib-pofsa5 2 2005-12-10
+integerArrayregister.
+
+authorization:
+leias19 19022006
+7 log in.
+
+authorization:
+sidimekov vmgkscir
+Неверный пароль
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+registration:
+тимофей tim abcde abcde 1 2005-10-20
+integerArrayregister.
+
+authorization:
+rosh.28@mail.ru Qfc12erty
+5 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+tima abcd
+Неверный пароль
+
+authorization:
+tim abcde
+11 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+leias19 19022006
+7 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+authorization:
+sidimekov vgmkscir
+3 log in.
+
+registration:
+vasyzvasyz vasyzvasyz vasyzvasyz vasyzvasyz 1 2005-12-09
+integerArrayregister.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.
+
+authorization:
+vasyzvasyz vasyzvasyz
+1 log in.

@@ -1,0 +1,75 @@
+.header {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 20;
+    color: #3a3a3c;
+    border-bottom: 1px;
+}
+
+.header .user-icon {
+    position: relative;
+}
+
+.header .user-icon-button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+}
+
+.header .user-icon-button svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #3a3a3c;
+}
+
+.header #heading-text {
+    padding: 10px;
+    font-size: 24px;
+    color: #3a3a3c;
+    width: 50%;
+}
+
+.header #end-heading-text {
+    padding: 10px;
+    font-size: 24px;
+    color: #3a3a3c;
+    text-align: end;
+    width: 50%;
+    text-decoration: none;
+}
+
+.nav {
+    background-color: #f2f2f2;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    z-index: 30;
+    padding: 12px 0;
+}
+
+.nav a {
+    text-decoration: none;
+    color: black;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.nav a:hover {
+    background-color: #ddd;
+}
+

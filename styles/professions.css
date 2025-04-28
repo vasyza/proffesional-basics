@@ -1,0 +1,118 @@
+.profession-boxes {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    grid-template-columns: repeat(3, auto);
+}
+
+.profession-box {
+    width: 300px;
+    margin: 0 20px 20px 0;
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    border-radius: 12px;
+    border-color: #888888;
+    border-width: 2px;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profession-box h2 {
+    margin-bottom: 20px;
+}
+
+.pvc-button,
+    /* .button {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    } */
+.view-rating-button,
+.my-piqs {
+    margin: 5px 5px;
+    background-color: #5d5d5d;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 30px;
+    width: 200px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.view-rating-button:active .pvc-button:active {
+    background-color: #5d5d5d;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin: 50px; */
+}
+
+.rate-button {
+    position: relative;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #5d5d5d;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pvc-button:focus + .pvc-list {
+    display: block;
+}
+
+.pvc-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #888888;
+    z-index: 10;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0;
+    border-radius: 12px;
+}
+
+.pvc-list dd {
+    padding: 5px;
+}
+
+.rating-bar {
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #000;
+    margin: auto;
+}
+
+
+.rating-progress {
+    color: #6c757d;
+    display: flex;
+    justify-content: center;
+}

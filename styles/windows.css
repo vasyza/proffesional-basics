@@ -1,0 +1,58 @@
+.window {
+    display: none;
+    position: fixed;
+    z-index: 40;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.window-content {
+    background-color: #ddd;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    width: 100%;
+    max-width: 800px;
+}
+
+.close-window {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: inherit;
+}
+
+.close-window:hover,
+.close-window:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.window-header {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.window-title {
+    font-size: 1.5em;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    font-weight: bold;
+    position: relative;
+}
+
+.window-text {
+    font-size: 24px;
+    text-align: center;
+    width: 100%;
+}

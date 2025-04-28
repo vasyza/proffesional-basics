@@ -1,0 +1,64 @@
+.progress-bar {
+    margin: 0 auto;
+    width: 90%;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #5d5d5d;
+    border-radius: 5px;
+}
+
+.stat_container {
+    /* margin: 10px 0; */
+    border: solid;
+    border-radius: 1px;
+    border-color: #ccc;
+    padding: 5px;
+    text-align: center;
+}
+
+.norm-panel {
+    display: table;
+    width: 100%;
+    height: 5%;
+    margin: 1%;
+    border-radius: 2px;
+    border-color: #b4afaf;
+    border: solid;
+}
+
+.norm-element {
+    display: table-cell;
+}
+
+.norm-button {
+    display: table-cell;
+    width: 25%;
+    background-color: #5d5d5d;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin:10px
+}
+
+
+.stat_button {
+    bottom: 20px;
+    background-color: #5d5d5d;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%;
+    min-width: 150px;
+    height: 40px;
+    font-size: 20px;
+    margin:10px
+}
