@@ -5,8 +5,10 @@ CREATE TABLE IF NOT EXISTS users (
     login VARCHAR(90) NOT NULL UNIQUE,
     name VARCHAR(50) NOT NULL,
     pass VARCHAR(255) NOT NULL,
+    bio TEXT,
     role VARCHAR(20) NOT NULL DEFAULT 'user', -- user, admin, expert, consultant
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE IF NOT EXISTS professions (
