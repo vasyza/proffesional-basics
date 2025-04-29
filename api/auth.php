@@ -8,12 +8,12 @@ session_start();
 $login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
 $pass = filter_var(trim($_POST['pass']), FILTER_SANITIZE_STRING);
 
-if (mb_strlen($login) < 5 || mb_strlen($login) > 90) {
-    header('Location: /auth/login.php?error=' . urlencode("Недопустимая длина логина"));
+if (mb_strlen($login) < 3 || mb_strlen($login) > 90) {
+    header('Location: /auth/login.php?error=' . urlencode("Недопустимая длина логина. Длина логина - от 3 до 90 символов"));
     exit();
 }
-if (mb_strlen($pass) < 8 || mb_strlen($pass) > 16) {
-    header('Location: /auth/login.php?error=' . urlencode("Недопустимая длина пароля"));
+if (mb_strlen($pass) < 6 || mb_strlen($pass) > 16) {
+    header('Location: /auth/login.php?error=' . urlencode("Недопустимая длина пароля. Длина пароля - от 6 до 16 символов"));
     exit();
 }
 
