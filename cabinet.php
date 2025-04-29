@@ -179,7 +179,7 @@ include 'includes/header.php';
             <?php if ($userRole != 'consultant'): ?>
                 <div class="card-footer bg-white d-flex justify-content-between">
                     <a href="/tests/index.php" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-1"></i> Перейти к тестам
+                        <i class="fas fa-list-alt me-1"></i> Перейти к тестам
                     </a>
                     <a href="/request_consultation.php" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus me-1"></i> Запросить новую консультацию
