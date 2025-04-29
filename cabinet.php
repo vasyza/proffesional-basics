@@ -176,13 +176,16 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
-            <?php if ($userRole === 'user'): ?>
-                <div class="card-footer bg-white">
+            <?php if ($userRole != 'consultant'): ?>
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <a href="/tests/index.php" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i> Перейти к тестам
+                    </a>
                     <a href="/request_consultation.php" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus me-1"></i> Запросить новую консультацию
                     </a>
-                </div>
-            <?php endif; ?>
+    </div>
+<?php endif; ?>
             <?php if (count($consultations) > 0): ?>
                 <div class="card mb-4">
                     <div class="card-header bg-light">
