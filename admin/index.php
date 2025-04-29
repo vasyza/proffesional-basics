@@ -116,10 +116,10 @@ try {
             <div class="col-md-12 mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <h1>Панель администратора</h1>
-                    <a href="/api/init_db.php" class="btn btn-sm btn-outline-danger"
+                    <!-- <a href="/api/init_db.php" class="btn btn-sm btn-outline-danger"
                         onclick="return confirm('Вы уверены, что хотите переинициализировать базу данных? Это может привести к потере данных!');">
                         <i class="fas fa-database me-1"></i> Инициализировать БД
-                    </a>
+                    </a> -->
                 </div>
                 <p class="lead">Управление порталом ИТ-профессий</p>
             </div>
