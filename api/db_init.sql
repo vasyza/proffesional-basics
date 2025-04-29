@@ -1,5 +1,7 @@
 \c opd;
 
+SET client_encoding = 'UTF8';
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     login VARCHAR(90) NOT NULL UNIQUE,
@@ -27,8 +29,8 @@ CREATE TABLE IF NOT EXISTS professions (
 
 CREATE TABLE IF NOT EXISTS expert_ratings (
     id SERIAL PRIMARY KEY,
-    profession_id INTEGER REFERENCES professions(id),
-    expert_id INTEGER REFERENCES users(id),
+    profession_id INTEGER REFERENCES professions(id) ON DELETE CASCADE,
+    expert_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     rating INTEGER NOT NULL, -- от 1 до 5
     comment TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
