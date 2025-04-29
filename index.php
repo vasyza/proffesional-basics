@@ -27,45 +27,36 @@ include 'includes/header.php';
             </div>
         </div>
         <div class="col-lg-6 d-flex align-items-center justify-content-center">
-            <img src="https://placehold.co/600x400?text=IT+Professions+Portal" alt="IT Профессии" class="img-fluid rounded shadow">
+            <img src="mp_pic.jpg" alt="IT Профессии" class="img-fluid rounded shadow">
         </div>
     </div>
     
     <!-- О портале -->
-    <div class="row mb-5" id="about">
-        <div class="col-12">
-            <h2 class="text-center mb-4">О нашем портале</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-laptop-code fa-3x text-primary mb-3"></i>
-                            <h3 class="h4 mb-3">Каталог профессий</h3>
-                            <p class="mb-0">Подробная информация о востребованных IT-специальностях, необходимых навыках и компетенциях.</p>
-                        </div>
+<div class="row mb-5" id="about">
+    <div class="col-12">
+        <h2 class="text-center mb-4">О нашем портале</h2>
+        <div class="row g-4 justify-content-center"> <!-- Добавлен justify-content-center -->
+            <div class="col-md-5"> <!-- Изменено с col-md-4 на col-md-5 для равной ширины -->
+                <div class="card h-100 border-0 shadow-sm hover-effect"> <!-- Добавлен класс hover-effect -->
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-laptop-code fa-3x text-primary mb-3"></i>
+                        <h3 class="h4 mb-3">Каталог профессий</h3>
+                        <p class="mb-0">Подробная информация о востребованных IT-специальностях, необходимых навыках и компетенциях.</p>
                     </div>
                 </div>
-                <!-- <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                            <h3 class="h4 mb-3">Рабочие группы</h3>
-                            <p class="mb-0">Возможность объединяться в команды по интересам для совместной работы над проектами и обмена опытом.</p>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-comments fa-3x text-primary mb-3"></i>
-                            <h3 class="h4 mb-3">Профессиональные консультации</h3>
-                            <p class="mb-0">Помощь экспертов и консультантов в выборе направления развития и решении профессиональных вопросов.</p>
-                        </div>
+            </div>
+            <div class="col-md-5"> <!-- Изменено с col-md-4 на col-md-5 для равной ширины -->
+                <div class="card h-100 border-0 shadow-sm hover-effect"> <!-- Добавлен класс hover-effect -->
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-comments fa-3x text-primary mb-3"></i>
+                        <h3 class="h4 mb-3">Профессиональные консультации</h3>
+                        <p class="mb-0">Помощь экспертов и консультантов в выборе направления развития и решении профессиональных вопросов.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Типы пользователей -->
     <div class="row mb-5" id="user-types">
@@ -139,14 +130,14 @@ include 'includes/header.php';
 <!-- Команда проекта -->
 <div class="container mb-5">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary text-white text-center">
             <h5 class="mb-0"><i class="fas fa-users me-2"></i> Команда проекта</h5>
         </div>
         <div class="card-body">
-            <div class="row gy-4">
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+            <div class="row gy-4 justify-content-center">
+                <div class="col-md-4 text-center"> 
+                    <div class="d-flex align-items-center flex-column">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-primary"></i>
                         </div>
                         <div>
@@ -156,9 +147,9 @@ include 'includes/header.php';
                     </div>
                 </div>
                 
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+                <div class="col-md-4 text-center">
+                    <div class="d-flex align-items-center flex-column">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-success"></i>
                         </div>
                         <div>
@@ -168,9 +159,9 @@ include 'includes/header.php';
                     </div>
                 </div>
                 
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+                <div class="col-md-4 text-center">
+                    <div class="d-flex align-items-center flex-column">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-danger"></i>
                         </div>
                         <div>
@@ -180,9 +171,9 @@ include 'includes/header.php';
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+                <div class="col-md-4 text-center">
+                    <div class="d-flex align-items-center flex-column">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-warning"></i>
                         </div>
                         <div>
@@ -192,9 +183,9 @@ include 'includes/header.php';
                     </div>
                 </div>
                 
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+                <div class="col-md-4 text-center">
+                    <div class="d-flex align-items-center flex-column">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-info"></i>
                         </div>
                         <div>
@@ -202,23 +193,21 @@ include 'includes/header.php';
                             <p class="mb-0 text-muted small">Дополнительный программист, тестировщик</p>
                         </div>
                     </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+                    
+                    <div class="d-flex align-items-center flex-column mt-3">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-secondary"></i>
                         </div>
                         <div>
                             <h6 class="mb-1">Кабиров Данияр Умарович</h6>
-                            <p class="mb-0 text-muted small">Тестировщик</p>
+                            <p class="mb-0 text-muted small">Дополнительный программист, тестировщик</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
+                
+                <div class="col-md-4 text-center">
+                    <div class="d-flex align-items-center flex-column">
+                        <div class="mb-2">
                             <i class="fas fa-user-circle fa-2x text-dark"></i>
                         </div>
                         <div>
