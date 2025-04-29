@@ -62,11 +62,11 @@ include_once '../includes/admin_header.php';
                     <div class="form-text">Например: 80 000 - 150 000 руб.</div>
                 </div>
                 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="career_path" class="form-label">Карьерный путь</label>
                     <textarea class="form-control" id="career_path" name="career_path" rows="3"></textarea>
                     <div class="form-text">Опишите возможные варианты развития карьеры.</div>
-                </div>
+                </div> -->
                 
                 <div class="d-flex justify-content-between">
                     <a href="/admin/professions.php" class="btn btn-secondary">Отмена</a>

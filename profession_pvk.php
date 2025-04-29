@@ -98,7 +98,7 @@ try {
     // Получение ПВК для профессии
     $stmt = $pdo->prepare("
         SELECT pq.*, 
-               COALESCE(AVG(pqr.importance), 0) as avg_importance,
+               COALESCE(AVG(pqr.rating), 0) as avg_importance,
                COUNT(DISTINCT pqr.expert_id) as experts_count,
                COALESCE(
                    (SELECT MIN(kendall_w) 
@@ -144,7 +144,7 @@ try {
     $heatmapData = [];
     if ($expertCount > 0) {
         $stmt = $pdo->prepare("
-            SELECT pqr.quality_id, pqr.expert_id, pqr.importance, u.name as expert_name,
+            SELECT pqr.quality_id, pqr.expert_id, pqr.rating, u.name as expert_name,
                    pq.name as quality_name, pq.category as quality_category
             FROM profession_quality_ratings pqr
             JOIN users u ON pqr.expert_id = u.id
@@ -173,7 +173,7 @@ try {
                 ];
             }
             
-            $heatmapData['ratings'][$rating['quality_id']][$rating['expert_id']] = $rating['importance'];
+            $heatmapData['ratings'][$rating['quality_id']][$rating['expert_id']] = $rating['rating'];
         }
     }
     
@@ -275,14 +275,14 @@ include 'includes/header.php';
                 </div>
                 
                 <!-- Диаграмма -->
-                <div class="card mb-4">
+                <!-- <div class="card mb-4">
                     <div class="card-header bg-primary text-white">
                         <h3 class="card-title mb-0">Диаграмма значимости ПВК</h3>
                     </div>
                     <div class="card-body">
                         <canvas id="qualitiesChart" height="400"></canvas>
                     </div>
-                </div>
+                </div> -->
                 
                 <!-- Тепловая карта оценок экспертов -->
                 <?php if (!empty($heatmapData)): ?>

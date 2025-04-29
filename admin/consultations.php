@@ -17,33 +17,34 @@ $status = isset($_GET['status']) ? $_GET['status'] : '';
 
 try {
     $pdo = getDbConnection();
-    
+
     // Формирование SQL-запроса с учетом фильтра
     $sql = "
-        SELECT c.*, 
-               u_consultant.name as consultant_name,
-               u_student.name as student_name
-        FROM consultations c
-        JOIN users u_consultant ON c.consultant_id = u_consultant.id
-        JOIN users u_student ON c.user_id = u_student.id
-        WHERE 1=1
-    ";
-    
+    SELECT c.*, 
+           u_consultant.name as consultant_name,
+           u_student.name as student_name,
+           p.title as profession_title
+    FROM consultations c
+    JOIN users u_consultant ON c.consultant_id = u_consultant.id
+    JOIN users u_student ON c.user_id = u_student.id
+    JOIN professions p ON c.profession_id = p.id
+    WHERE 1=1
+";
+
     if (!empty($status)) {
         $sql .= " AND c.status = :status";
     }
-    
+
     $sql .= " ORDER BY c.created_at DESC";
-    
+
     $stmt = $pdo->prepare($sql);
-    
+
     if (!empty($status)) {
         $stmt->bindParam(':status', $status);
     }
-    
+
     $stmt->execute();
     $consultations = $stmt->fetchAll();
-    
 } catch (PDOException $e) {
     $error = "Ошибка базы данных: " . $e->getMessage();
     $consultations = [];
@@ -55,29 +56,38 @@ include_once '../includes/admin_header.php';
 
 <div class="container mt-4">
     <h1>Управление консультациями</h1>
-    
+
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
-    
+
     <?php if (!empty($success)): ?>
         <div class="alert alert-success"><?php echo $success; ?></div>
     <?php endif; ?>
-    
+
     <div class="row mb-3">
         <div class="col-md-6">
             <div class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <?php 
-                        $statusText = '';
-                        switch ($status) {
-                            case 'pending': $statusText = 'Ожидает'; break;
-                            case 'scheduled': $statusText = 'Запланирована'; break;
-                            case 'completed': $statusText = 'Завершена'; break;
-                            case 'cancelled': $statusText = 'Отменена'; break;
-                            default: $statusText = 'Все статусы';
-                        }
-                        echo $statusText;
+                    <?php
+                    $statusText = '';
+                    switch ($status) {
+                        case 'pending':
+                            $statusText = 'Ожидает';
+                            break;
+                        case 'scheduled':
+                            $statusText = 'Запланирована';
+                            break;
+                        case 'completed':
+                            $statusText = 'Завершена';
+                            break;
+                        case 'cancelled':
+                            $statusText = 'Отменена';
+                            break;
+                        default:
+                            $statusText = 'Все статусы';
+                    }
+                    echo $statusText;
                     ?>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="statusDropdown">
@@ -90,7 +100,7 @@ include_once '../includes/admin_header.php';
             </div>
         </div>
     </div>
-    
+
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">Список консультаций</h5>
@@ -122,29 +132,36 @@ include_once '../includes/admin_header.php';
                                 <td><?php echo htmlspecialchars($consultation['consultant_name']); ?></td>
                                 <td><?php echo htmlspecialchars($consultation['profession_title']); ?></td>
                                 <td>
-                                    <span class="badge <?php 
-                                        echo $consultation['status'] === 'completed' ? 'bg-success' : 
-                                            ($consultation['status'] === 'scheduled' ? 'bg-primary' : 
-                                                ($consultation['status'] === 'cancelled' ? 'bg-danger' : 'bg-warning')); 
-                                    ?>">
-                                        <?php 
+                                    <span class="badge <?php
+                                                        echo $consultation['status'] === 'completed' ? 'bg-success' : ($consultation['status'] === 'scheduled' ? 'bg-primary' : ($consultation['status'] === 'cancelled' ? 'bg-danger' : 'bg-warning'));
+                                                        ?>">
+                                        <?php
                                         switch ($consultation['status']) {
-                                            case 'pending': echo 'Ожидает'; break;
-                                            case 'scheduled': echo 'Запланирована'; break;
-                                            case 'completed': echo 'Завершена'; break;
-                                            case 'cancelled': echo 'Отменена'; break;
-                                            default: echo $consultation['status'];
+                                            case 'pending':
+                                                echo 'Ожидает';
+                                                break;
+                                            case 'scheduled':
+                                                echo 'Запланирована';
+                                                break;
+                                            case 'completed':
+                                                echo 'Завершена';
+                                                break;
+                                            case 'cancelled':
+                                                echo 'Отменена';
+                                                break;
+                                            default:
+                                                echo $consultation['status'];
                                         }
                                         ?>
                                     </span>
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/consultation_details.php?id=<?php echo $consultation['id']; ?>" class="btn btn-info">
+                                        <a href="/consultation.php?id=<?php echo $consultation['id']; ?>" class="btn btn-info">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <button type="button" class="btn btn-danger" 
-                                                onclick="confirmDelete(<?php echo $consultation['id']; ?>)">
+                                        <button type="button" class="btn btn-danger"
+                                            onclick="confirmDelete(<?php echo $consultation['id']; ?>)">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -178,11 +195,11 @@ include_once '../includes/admin_header.php';
 </div>
 
 <script>
-function confirmDelete(id) {
-    document.getElementById('deleteLink').href = '/api/delete_consultation.php?id=' + id;
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
-}
+    function confirmDelete(id) {
+        document.getElementById('deleteLink').href = '/api/delete_consultation.php?id=' + id;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
 </script>
 
-<?php include_once '../includes/admin_footer.php'; ?> 
+<?php include_once '../includes/admin_footer.php'; ?>

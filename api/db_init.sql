@@ -1,7 +1,5 @@
 \c opd;
 
-SET client_encoding = 'UTF8';
-
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     login VARCHAR(90) NOT NULL UNIQUE,
@@ -38,9 +36,9 @@ CREATE TABLE IF NOT EXISTS expert_ratings (
 
 CREATE TABLE IF NOT EXISTS consultations (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    consultant_id INTEGER REFERENCES users(id),
-    profession_id INTEGER REFERENCES professions(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    consultant_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    profession_id INTEGER REFERENCES professions(id) ON DELETE CASCADE,
     status VARCHAR(20) DEFAULT 'pending',
     topic VARCHAR(255) NOT NULL,
     message TEXT,
@@ -54,9 +52,8 @@ CREATE TABLE IF NOT EXISTS consultations (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     scheduled_at TIMESTAMP,
     completed_at TIMESTAMP,
-    duration INTEGER -- in minutes
+    duration INTEGER
 );
-
 CREATE TABLE IF NOT EXISTS consultants (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     specialization VARCHAR(255) DEFAULT 'Не указана',
@@ -80,14 +77,7 @@ CREATE TABLE IF NOT EXISTS group_members (
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS professional_qualities (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    category VARCHAR(100)
-);
-
-CREATE TABLE IF NOT EXISTS profession_quality_ratings (
+CREATE TABLE profession_quality_ratings (
     id SERIAL PRIMARY KEY,
     profession_id INTEGER NOT NULL REFERENCES professions(id) ON DELETE CASCADE,
     expert_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -97,11 +87,26 @@ CREATE TABLE IF NOT EXISTS profession_quality_ratings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS combined_profession_quality_ratings (
+CREATE TABLE professional_qualities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(100)
+);
+
+CREATE TABLE combined_profession_quality_ratings (
     id SERIAL PRIMARY KEY,
     profession_id INTEGER NOT NULL REFERENCES professions(id) ON DELETE CASCADE,
     quality_id INTEGER NOT NULL REFERENCES professional_qualities(id) ON DELETE CASCADE,
     average_rating FLOAT NOT NULL CHECK (average_rating BETWEEN 1 AND 10) DEFAULT 1.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+CREATE TABLE profession_quality_concordance (
+    id SERIAL PRIMARY KEY,
+    profession_id INTEGER NOT NULL REFERENCES professions(id),
+    quality_id INTEGER REFERENCES professional_qualities(id),
+    kendall_w FLOAT NOT NULL CHECK (kendall_w BETWEEN 0 AND 1),
+    experts_count INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

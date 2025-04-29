@@ -96,7 +96,7 @@ include_once 'includes/header.php';
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <strong>Студент:</strong> 
-                            <?php echo htmlspecialchars($consultation['user_name']) . " (@". htmlspecialchars($consultation['user_login']) . ")"; ?>
+                            <?php echo htmlspecialchars($consultation['user_name']); ?>
                         </div>
                         <div class="col-md-6">
                             <strong>Консультант:</strong>
