@@ -176,7 +176,7 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
-            <?php if ($userRole != 'consultant'): ?>
+            <?php if ($userRole === 'user'): ?>
                 <div class="card-footer bg-white">
                     <a href="/request_consultation.php" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus me-1"></i> Запросить новую консультацию
