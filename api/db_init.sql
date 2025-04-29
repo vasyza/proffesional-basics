@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     bio TEXT,
     role VARCHAR(20) NOT NULL DEFAULT 'user', -- user, admin, expert, consultant
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS professions (
@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS expert_ratings (
 
 CREATE TABLE IF NOT EXISTS consultations (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    consultant_id INTEGER REFERENCES users(id),
-    profession_id INTEGER REFERENCES professions(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    consultant_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    profession_id INTEGER REFERENCES professions(id) ON DELETE CASCADE,
     status VARCHAR(20) DEFAULT 'pending',
     topic VARCHAR(255) NOT NULL,
     message TEXT,
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS consultations (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     scheduled_at TIMESTAMP,
     completed_at TIMESTAMP,
-    duration INTEGER, -- in minutes
+    duration INTEGER
 );
 CREATE TABLE IF NOT EXISTS consultants (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
@@ -101,6 +101,14 @@ CREATE TABLE combined_profession_quality_ratings (
     average_rating FLOAT NOT NULL CHECK (average_rating BETWEEN 1 AND 10) DEFAULT 1.0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
+CREATE TABLE profession_quality_concordance (
+    id SERIAL PRIMARY KEY,
+    profession_id INTEGER NOT NULL REFERENCES professions(id),
+    quality_id INTEGER REFERENCES professional_qualities(id),
+    kendall_w FLOAT NOT NULL CHECK (kendall_w BETWEEN 0 AND 1),
+    experts_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE INDEX IF NOT EXISTS idx_users_login ON users(login);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
