@@ -37,8 +37,8 @@ try {
     $stmt->execute([$id]);
     
     // Удаление связей с профессиями
-    $stmt = $pdo->prepare("DELETE FROM profession_qualities WHERE quality_id = ?");
-    $stmt->execute([$id]);
+    // $stmt = $pdo->prepare("DELETE FROM professional_qualities WHERE quality_id = ?");
+    // $stmt->execute([$id]);
     
     // Удаление самого качества
     $stmt = $pdo->prepare("DELETE FROM professional_qualities WHERE id = ?");

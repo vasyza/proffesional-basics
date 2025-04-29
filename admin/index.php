@@ -123,6 +123,12 @@ try {
                 </div>
                 <p class="lead">Управление порталом ИТ-профессий</p>
             </div>
+            <div class="col-md-6 mb-3">
+    <a href="manage_qualities.php" class="btn btn-outline-primary btn-lg w-100">
+        <i class="fas fa-list me-2"></i>
+        ПВК (Список качеств)
+    </a>
+</div>
         </div>
 
         <div class="row mb-4">
