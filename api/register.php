@@ -37,14 +37,14 @@ if (!$terms) {
 }
 
 // Проверка длины логина
-if (strlen($login) < 3) {
-    header('Location: /auth/register.php?error=' . urlencode("Логин должен содержать не менее 3 символов"));
+if (strlen($login) < 3 || strlen($login) > 90) {
+    header('Location: /auth/register.php?error=' . urlencode("Логин должен содержать не менее 3 и не более 90 символов"));
     exit;
 }
 
 // Проверка длины пароля
-if (strlen($password) < 6) {
-    header('Location: /auth/register.php?error=' . urlencode("Пароль должен содержать не менее 6 символов"));
+if (strlen($password) < 6 || strlen($password) > 16) {
+    header('Location: /auth/register.php?error=' . urlencode("Пароль должен содержать не менее 6 и не более 16 символов"));
     exit;
 }
 
