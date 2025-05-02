@@ -148,7 +148,7 @@ include_once 'includes/header.php';
                             <?php echo nl2br(htmlspecialchars($consultation['completion_notes'] ?? 'Нет итогов')); ?>
                         </div>
 
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <strong>Оценка:</strong>
                             <?php
                             if ($consultation['rating']) {
@@ -160,7 +160,7 @@ include_once 'includes/header.php';
                                 echo '<span class="text-muted">Нет оценки</span>';
                             }
                             ?>
-                        </div>
+                        </div> -->
 
                         <?php if (!empty($consultation['user_feedback'])): ?>
                             <div class="mb-3">
