@@ -261,9 +261,9 @@ try {
                     <li class="nav-item">
                         <a class="nav-link" href="/professions.php">Каталог профессий</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/groups.php">Рабочие группы</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div class="navbar-nav">
                     <div class="nav-item dropdown">
@@ -294,7 +294,7 @@ try {
                 <!-- Карточка консультанта -->
                 <div class="consultant-card">
                     <h2>Здравствуйте, <?php echo htmlspecialchars($userName); ?>!</h2>
-                    <p>Ваша специализация:
+                    <!-- <p>Ваша специализация:
                         <strong><?php echo htmlspecialchars($consultant_data['specialization'] ?? 'Не указана'); ?></strong>
                     </p>
                     <p>Опыт работы:
@@ -302,7 +302,7 @@ try {
                     </p>
                     <p>Образование:
                         <strong><?php echo htmlspecialchars($consultant_data['education'] ?? 'Не указано'); ?></strong>
-                    </p>
+                    </p> -->
 
                     <div class="consultant-stats">
                         <div class="stat-item stat-pending">
@@ -351,7 +351,7 @@ try {
                 </div>
 
                 <!-- Рейтинг консультанта -->
-                <div class="consultant-card">
+                <!-- <div class="consultant-card">
                     <h3>Ваш рейтинг</h3>
                     <div class="text-center">
                         <div class="display-4"><?php echo number_format($consultant_data['avg_rating'] ?? 0, 1); ?>
@@ -367,7 +367,7 @@ try {
                             <?php echo intval($consultant_data['consultations_count'] ?? 0); ?> отзывах
                         </p>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="col-md-8">
@@ -653,7 +653,7 @@ try {
                                                 <p><strong>Дата проведения:</strong>
                                                     <?php echo date('d.m.Y H:i', strtotime($consultation['completed_at'])); ?>
                                                 </p>
-                                                <p><strong>Рейтинг:</strong>
+                                                <!-- <p><strong>Рейтинг:</strong>
                                                     <?php if ($consultation['rating']): ?>
                                                         <span class="text-warning">
                                                             <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -665,7 +665,7 @@ try {
                                                     <?php else: ?>
                                                         <span class="text-muted">Нет оценки</span>
                                                     <?php endif; ?>
-                                                </p>
+                                                </p> -->
                                             </div>
                                             <div class="col-md-6">
                                                 <p><strong>Итоги консультации:</strong></p>
