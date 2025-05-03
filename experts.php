@@ -16,7 +16,7 @@ try {
     $stmt = $pdo->prepare("
         SELECT id, name, bio, created_at
         FROM users
-        WHERE role = 'expert'
+        WHERE role = 'expert' AND isPublic = TRUE
         ORDER BY created_at DESC
     ");
     $stmt->execute();
