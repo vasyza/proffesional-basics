@@ -209,7 +209,14 @@ $recent_ratings = [];
                             <i class="fas fa-list me-1"></i> Просмотреть ПВК
                         </a>
                     </div>
-
+                    
+                    <!-- Тумблер -->
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" id="expertModeSwitch">
+                        <label class="form-check-label" for="expertModeSwitch">Публичный профиль</label>
+                        <div class="form-text">Если включено, ваши данные будут видны пользователям</div>
+                    </div>
+                    
                     <!-- <div class="expert-stats">
                         <div class="stat-item">
                             <div class="stat-value"><?php echo intval($expert_data['ratings_count'] ?? 0); ?></div>
@@ -377,6 +384,45 @@ $recent_ratings = [];
             <?php endforeach; ?>
         });
     </script>
+
+    // Тумблер
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const expertModeSwitch = document.getElementById('expertModeSwitch');
+    
+    // Загрузка текущего состояния при старте страницы
+    fetch('../api/getPublicStat.php')
+        .then(response => response.json())
+        .then(data => {
+            expertModeSwitch.checked = data.isPublic;
+        })
+        .catch(error => console.error('Error:', error));
+
+    // При изменении тумблера
+    expertModeSwitch.addEventListener('change', function() {
+        const isPublic = this.checked ? 1 : 0;
+        
+        fetch('../api/updatePublicStat.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ isPublic: isPublic })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                alert('Ошибка при обновлении статуса');
+                expertModeSwitch.checked = !isPublic; // Возвращаем предыдущее состояние
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            expertModeSwitch.checked = !isPublic; // Возвращаем предыдущее состояние
+        });
+    });
+});
+</script>
 </body>
 
 </html>
