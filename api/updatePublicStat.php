@@ -3,7 +3,7 @@ session_start();
 require_once '../api/config.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header('HTTP/1.1 401 Unauthorized');
+    header('Ошибочка');
     exit;
 }
 
@@ -17,7 +17,7 @@ try {
     
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
-    header('HTTP/1.1 500 Internal Server Error');
+    header('Ошибочка');
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
 ?>
