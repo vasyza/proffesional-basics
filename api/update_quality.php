@@ -54,7 +54,7 @@ try {
     // Обновление качества
     $stmt = $pdo->prepare("
         UPDATE professional_qualities
-        SET name = ?, category = ?, description = ?, updated_at = NOW()
+        SET name = ?, category = ?, description = ?
         WHERE id = ?
     ");
     
