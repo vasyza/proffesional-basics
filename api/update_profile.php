@@ -16,12 +16,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $bio = isset($_POST['bio']) ? trim($_POST['bio']) : '';
+$gender = isset($_POST['gender']) ? trim($_POST['gender']) : '';
 $currentPassword = isset($_POST['current_password']) ? $_POST['current_password'] : '';
 $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
 $confirmPassword = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
 
+// Валидация данных
 if (empty($name)) {
     header("Location: /edit_profile.php?error=" . urlencode("Имя не может быть пустым"));
+    exit;
+}
+
+if (empty($gender) || !in_array($gender, ['мужской', 'женский'])) {
+    header("Location: /edit_profile.php?error=" . urlencode("Укажите корректный пол"));
     exit;
 }
 
@@ -39,8 +46,13 @@ try {
     }
 
     // Подготовка запроса на обновление
-    $updateFields = ["name" => $name, "bio" => $bio];
+    $updateFields = [
+        "name" => $name,
+        "bio" => $bio,
+        "gender" => $gender
+    ];
 
+    // Обработка изменения пароля
     if (!empty($currentPassword) || !empty($newPassword) || !empty($confirmPassword)) {
         // Проверка пароля
         $currentPasswordHash = md5($currentPassword . "hiferhifurie");
@@ -76,6 +88,12 @@ try {
     $sql = "UPDATE users SET " . implode(", ", $setParts) . ", updated_at = CURRENT_TIMESTAMP WHERE id = ?";
     $updateStmt = $pdo->prepare($sql);
     $updateStmt->execute($params);
+
+    // Обновляем данные в сессии
+    $_SESSION['user_name'] = $name;
+    if (isset($newPasswordHash)) {
+        $_SESSION['user_pass_updated'] = time();
+    }
 
     header("Location: /edit_profile.php?success=" . urlencode("Профиль успешно обновлен"));
     exit;
