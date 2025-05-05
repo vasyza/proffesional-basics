@@ -67,6 +67,16 @@ include_once 'includes/header.php';
                             <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
                         </div>
                         
+                        <!-- Выпадающий список для выбора пола -->
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Пол</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="" disabled>Выберите пол</option>
+                                <option value="мужской" <?php echo ($user['gender'] ?? '') === 'мужской' ? 'selected' : ''; ?>>мужской</option>
+                                <option value="женский" <?php echo ($user['gender'] ?? '') === 'женский' ? 'selected' : ''; ?>>женский</option>
+                            </select>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="current_password" class="form-label">Текущий пароль</label>
                             <input type="password" class="form-control" id="current_password" name="current_password">
@@ -120,6 +130,15 @@ include_once 'includes/header.php';
                             ?>
                         </span>
                     </p>
+                    <p><strong>Пол:</strong> 
+                        <?php 
+                        switch ($user['gender'] ?? '') {
+                            case 'мужской': echo 'мужской'; break;
+                            case 'женский': echo 'женский'; break;
+                            default: echo 'Не указан';
+                        }
+                        ?>
+                    </p>
                     <p><strong>Дата регистрации:</strong> <?php echo date('d.m.Y H:i', strtotime($user['created_at'])); ?></p>
                     
                     <?php if ($user['role'] === 'expert'): ?>
@@ -166,4 +185,4 @@ include_once 'includes/header.php';
     </div>
 </div>
 
-<?php include_once 'includes/footer.php'; ?> 
+<?php include_once 'includes/footer.php'; ?>
