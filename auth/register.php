@@ -41,6 +41,16 @@ include_once '../includes/auth_header.php';
                             <input type="text" class="form-control" id="login" name="login" required>
                         </div>
                         
+                        <!-- Выпадающий список для выбора пола -->
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">Пол</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="" disabled selected></option>
+                                <option value="мужской">мужской</option>
+                                <option value="женский">женский</option>
+                            </select>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="password" class="form-label">Пароль</label>
                             <input type="password" class="form-control" id="password" name="password" required>
