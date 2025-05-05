@@ -23,6 +23,7 @@ $login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
 $password = trim($_POST['password']);
 $password_confirm = trim($_POST['password_confirm'] ?? $_POST['confirm_password']);
 $terms = isset($_POST['terms']) ? true : false;
+$gender = isset($_POST['gender']) ? filter_var(trim($_POST['gender']), FILTER_SANITIZE_STRING) : null;
 
 // Проверка наличия всех обязательных полей
 if (empty($name) || empty($login) || empty($password) || empty($password_confirm)) {
@@ -33,6 +34,12 @@ if (empty($name) || empty($login) || empty($password) || empty($password_confirm
 // Проверка согласия с правилами
 if (!$terms) {
     header('Location: /auth/register.php?error=' . urlencode("Необходимо согласиться с правилами использования"));
+    exit;
+}
+
+// Проверка наличия пола
+if (empty($gender) || !in_array($gender, ['мужской', 'женский'])) {
+    header('Location: /auth/register.php?error=' . urlencode("Укажите ваш пол"));
     exit;
 }
 
@@ -76,15 +83,16 @@ try {
 
     // Добавление пользователя в базу данных
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, login, pass, role, created_at)
-        VALUES (:name, :login, :pass, :role, NOW())
+        INSERT INTO users (name, login, pass, role, gender, created_at)
+        VALUES (:name, :login, :pass, :role, :gender, NOW())
     ");
 
     $stmt->execute([
         ':name' => $name,
         ':login' => $login,
         ':pass' => $hashed_password,
-        ':role' => $role
+        ':role' => $role,
+        ':gender' => $gender
     ]);
 
     // Получение ID нового пользователя
@@ -98,13 +106,13 @@ try {
     $_SESSION['user_name'] = $name;
     $_SESSION['user_login'] = $login;
     $_SESSION['user_role'] = $role;
+    $_SESSION['user_gender'] = $gender;
 
     // Перенаправляем на страницу личного кабинета
     header('Location: /cabinet.php?success=' . urlencode("Регистрация успешно завершена!"));
     exit;
 
 } catch (PDOException $e) {
-    echo $e->getMessage();
     // Отменяем транзакцию в случае ошибки
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
