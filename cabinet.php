@@ -148,6 +148,10 @@ include 'includes/header.php';
                         <div class="col-md-8"><?php echo htmlspecialchars('' . $user['bio']); ?></div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Пол:</div>
+                        <div class="col-md-8"><?php echo htmlspecialchars('' . $user['gender']); ?></div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-4 fw-bold">Роль:</div>
                         <div class="col-md-8">
                             <?php
