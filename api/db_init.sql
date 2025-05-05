@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL DEFAULT 'user', -- user, admin, expert, consultant
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    gender VARCHAR(20) CHECK (gender = 'мужской' OR gender = 'женский'),
+    gender VARCHAR(20) DEFAULT 'мужской' CHECK (gender = 'мужской' OR gender = 'женский'),
     isPublic BOOLEAN DEFAULT FALSE
 );
 
