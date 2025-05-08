@@ -1,3 +1,5 @@
+SET client_encoding = 'UTF8';
+
 -- Таблица для хранения сессий тестирования
 CREATE TABLE IF NOT EXISTS test_sessions (
     id SERIAL PRIMARY KEY,
@@ -93,12 +95,48 @@ CREATE TABLE IF NOT EXISTS test_names (
     test_type VARCHAR(50) NOT NULL,
     name VARCHAR(255) NOT NULL
 );
+
 INSERT INTO test_names (test_type, name) VALUES
 ('light_reaction', 'Реакция на свет'),
 ('sound_reaction', 'Реакция на звук'),
 ('color_reaction', 'Реакция на разные цвета'),
 ('visual_arithmetic', 'Визуальная арифметика'),
 ('sound_arithmetic', 'Звуковой сигнал и арифметика');
+
+CREATE TABLE IF NOT EXISTS light_respondents (
+    id SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS sound_respondents (
+    id SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS color_respondents (
+    id SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS s_arith_respondents (
+    id SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS v_arith_respondents (
+    id SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP NOT NULL,
+    UNIQUE (user_name)
+);
 
 -- Индексы для ускорения запросов
 CREATE INDEX idx_test_sessions_user_id ON test_sessions(user_id);
