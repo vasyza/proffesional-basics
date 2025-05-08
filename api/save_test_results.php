@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
+$username = $_SESSION['user_name'] ?? '';
 
 // Получение тела запроса
 $inputJSON = file_get_contents('php://input');
@@ -32,7 +33,87 @@ try {
     // Начало транзакции
     $pdo->beginTransaction();
 
-    // 1. Создание записи о тестировании
+    // Добавление пользователя в таблицу light_respondents (если его там еще нет)
+if ($testType === 'light_reaction' && !empty($username)) {
+    // Проверяем, есть ли уже пользователь в таблице
+    $stmt = $pdo->prepare("SELECT id FROM light_respondents WHERE user_name = ?");
+    $stmt->execute([$username]);
+    
+    if ($stmt->rowCount() == 0) {
+        // Если пользователя нет, добавляем его
+        $insertStmt = $pdo->prepare("
+            INSERT INTO light_respondents (user_name, test_date) 
+            VALUES (?, NOW())
+        ");
+        $insertStmt->execute([$username]);
+    }
+}
+
+// Добавление пользователя в таблицу sound_respondents (если его там еще нет)
+if ($testType === 'sound_reaction' && !empty($username)) {
+    // Проверяем, есть ли уже пользователь в таблице
+    $stmt = $pdo->prepare("SELECT id FROM sound_respondents WHERE user_name = ?");
+    $stmt->execute([$username]);
+    
+    if ($stmt->rowCount() == 0) {
+        // Если пользователя нет, добавляем его
+        $insertStmt = $pdo->prepare("
+            INSERT INTO sound_respondents (user_name, test_date) 
+            VALUES (?, NOW())
+        ");
+        $insertStmt->execute([$username]);
+    }
+}
+
+// Добавление пользователя в таблицу color_respondents (если его там еще нет)
+if ($testType === 'color_reaction' && !empty($username)) {
+    // Проверяем, есть ли уже пользователь в таблице
+    $stmt = $pdo->prepare("SELECT id FROM color_respondents WHERE user_name = ?");
+    $stmt->execute([$username]);
+    
+    if ($stmt->rowCount() == 0) {
+        // Если пользователя нет, добавляем его
+        $insertStmt = $pdo->prepare("
+            INSERT INTO color_respondents (user_name, test_date) 
+            VALUES (?, NOW())
+        ");
+        $insertStmt->execute([$username]);
+    }
+}
+
+// Добавление пользователя в таблицу s_arith_respondents (если его там еще нет)
+if ($testType === 'sound_arithmetic' && !empty($username)) {
+    // Проверяем, есть ли уже пользователь в таблице
+    $stmt = $pdo->prepare("SELECT id FROM s_arith_respondents WHERE user_name = ?");
+    $stmt->execute([$username]);
+    
+    if ($stmt->rowCount() == 0) {
+        // Если пользователя нет, добавляем его
+        $insertStmt = $pdo->prepare("
+            INSERT INTO s_arith_respondents (user_name, test_date) 
+            VALUES (?, NOW())
+        ");
+        $insertStmt->execute([$username]);
+    }
+}
+
+// Добавление пользователя в таблицу v_arith_respondents (если его там еще нет)
+if ($testType === 'visual_arithmetic' && !empty($username)) {
+    // Проверяем, есть ли уже пользователь в таблице
+    $stmt = $pdo->prepare("SELECT id FROM v_arith_respondents WHERE user_name = ?");
+    $stmt->execute([$username]);
+    
+    if ($stmt->rowCount() == 0) {
+        // Если пользователя нет, добавляем его
+        $insertStmt = $pdo->prepare("
+            INSERT INTO v_arith_respondents (user_name, test_date) 
+            VALUES (?, NOW())
+        ");
+        $insertStmt->execute([$username]);
+    }
+}
+
+    // Создание записи о тестировании
     $stmt = $pdo->prepare("
         INSERT INTO test_sessions (user_id, test_type, average_time, accuracy, created_at)
         VALUES (?, ?, ?, ?, NOW())
@@ -40,7 +121,7 @@ try {
     $stmt->execute([$userId, $testType, $averageTime, $accuracy]);
     $sessionId = $pdo->lastInsertId();
 
-    // 2. Сохранение результатов каждой попытки
+    // Сохранение результатов каждой попытки
     $stmt = $pdo->prepare("
         INSERT INTO test_attempts (session_id, trial_number, stimulus_value, response_value, reaction_time, is_correct)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -69,7 +150,7 @@ try {
         $stmt->execute([$sessionId, $trialNumber, $stimulusValue, $responseValue, $reactionTime, $isCorrect]);
     }
 
-    // 3. Обновление записи о приглашении на тест, если тест был запущен по приглашению
+    // 4. Обновление записи о приглашении на тест, если тест был запущен по приглашению
     if (isset($_SESSION['invitation_id'])) {
         $invitationId = $_SESSION['invitation_id'];
         $stmt = $pdo->prepare("
@@ -115,4 +196,3 @@ try {
         'message' => 'Ошибка базы данных: ' . $e->getMessage()
     ]);
 }
-?>
