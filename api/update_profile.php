@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+$age = isset($_POST['age']) ? filter_var(trim($_POST['age']), FILTER_VALIDATE_INT, ['options' => ['min_range' => 12]]) : null;
 $bio = isset($_POST['bio']) ? trim($_POST['bio']) : '';
 $gender = isset($_POST['gender']) ? trim($_POST['gender']) : '';
 $currentPassword = isset($_POST['current_password']) ? $_POST['current_password'] : '';
@@ -24,6 +25,11 @@ $confirmPassword = isset($_POST['confirm_password']) ? $_POST['confirm_password'
 // Валидация данных
 if (empty($name)) {
     header("Location: /edit_profile.php?error=" . urlencode("Имя не может быть пустым"));
+    exit;
+}
+
+if ($age === false || $age === null) {
+    header("Location: /edit_profile.php?error=" . urlencode("Укажите корректный возраст (от 12 лет)"));
     exit;
 }
 
@@ -48,6 +54,7 @@ try {
     // Подготовка запроса на обновление
     $updateFields = [
         "name" => $name,
+        "age" => $age,
         "bio" => $bio,
         "gender" => $gender
     ];
@@ -91,6 +98,8 @@ try {
 
     // Обновляем данные в сессии
     $_SESSION['user_name'] = $name;
+    $_SESSION['user_age'] = $age;
+    $_SESSION['user_gender'] = $gender;
     if (isset($newPasswordHash)) {
         $_SESSION['user_pass_updated'] = time();
     }
@@ -103,3 +112,4 @@ try {
     header("Location: /edit_profile.php?error=" . urlencode("Ошибка базы данных: " . $e->getMessage()));
     exit;
 }
+?>
