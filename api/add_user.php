@@ -18,11 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Получение данных из формы
 $name = clean_input($_POST['name'] ?? '');
 $login = clean_input($_POST['login'] ?? '');
 $password = $_POST['password'] ?? '';
 $password_confirm = $_POST['password_confirm'] ?? '';
 $role = clean_input($_POST['role'] ?? '');
+// Новые поля: возраст и пол
+$age = filter_var($_POST['age'] ?? 0, FILTER_VALIDATE_INT, ['options' => ['min_range' => 12]]);
+$gender = clean_input($_POST['gender'] ?? '');
 
 // Валидация входных данных
 if (empty($name) || empty($login) || empty($password) || empty($password_confirm) || empty($role)) {
@@ -48,6 +52,18 @@ if ($password !== $password_confirm) {
     exit;
 }
 
+// Проверка возраста
+if ($age === false) {
+    header('Location: /auth/add_user.php?error=' . urlencode("Возраст должен быть от 12 лет"));
+    exit;
+}
+
+// Проверка пола
+if (!in_array($gender, ['мужской', 'женский'])) {
+    header('Location: /auth/add_user.php?error=' . urlencode("Укажите корректный пол"));
+    exit;
+}
+
 // Хеширование пароля
 //$hashed_password = md5($password . "hiferhifurie");
 try {
@@ -70,17 +86,19 @@ try {
     // Определение роли пользователя (по умолчанию - обычный пользователь)
     //$role = 'user';
 
-    // Добавление пользователя в базу данных
+    // Добавление пользователя в базу данных (обновленный запрос с age и gender)
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, login, pass, role, created_at)
-        VALUES (:name, :login, :pass, :role, NOW())
+        INSERT INTO users (name, login, pass, role, age, gender, created_at)
+        VALUES (:name, :login, :pass, :role, :age, :gender, NOW())
     ");
 
     $stmt->execute([
         ':name' => $name,
         ':login' => $login,
         ':pass' => $hashed_password,
-        ':role' => $role
+        ':role' => $role,
+        ':age' => $age,
+        ':gender' => $gender
     ]);
 
     // Получение ID нового пользователя
