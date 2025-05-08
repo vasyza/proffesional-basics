@@ -67,6 +67,39 @@ CREATE TABLE IF NOT EXISTS test_norms (
     updated_at TIMESTAMP
 );
 
+-- Таблица для хранения информации о пакетах тестов
+CREATE TABLE IF NOT EXISTS test_batches (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expert_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL,
+    isFinished BOOLEAN DEFAULT FALSE
+);
+
+-- Таблица для хранения информации о тестах, которые будут проходиться в рамках одного пакета
+-- (например, в рамках одного приглашения)
+CREATE TABLE IF NOT EXISTS tests_in_batches (
+    id SERIAL PRIMARY KEY,
+    batch_id INTEGER NOT NULL REFERENCES test_batches(id) ON DELETE CASCADE,
+    test_type VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    isFinished BOOLEAN DEFAULT FALSE
+);
+
+-- Таблица для хранения информации о типах тестов
+-- (например, "Тест на внимание", "Тест на память" и т.д.)
+CREATE TABLE IF NOT EXISTS test_names (
+    id SERIAL PRIMARY KEY,
+    test_type VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL
+);
+INSERT INTO test_names (test_type, name) VALUES
+('light_reaction', 'Реакция на свет'),
+('sound_reaction', 'Реакция на звук'),
+('color_reaction', 'Реакция на разные цвета'),
+('visual_arithmetic', 'Визуальная арифметика'),
+('sound_arithmetic', 'Звуковой сигнал и арифметика');
+
 -- Индексы для ускорения запросов
 CREATE INDEX idx_test_sessions_user_id ON test_sessions(user_id);
 CREATE INDEX idx_test_sessions_test_type ON test_sessions(test_type);

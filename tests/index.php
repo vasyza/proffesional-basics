@@ -1,5 +1,27 @@
 <?php
 session_start();
+
+// Завершение партии тестов
+if (isset($_POST['finish_batch'])) {
+    require_once '../api/config.php';
+    try {
+        $pdo = getDbConnection();
+        $stmt = $pdo->prepare("SELECT id FROM test_batches WHERE user_id = ? AND isFinished = FALSE ORDER BY created_at DESC LIMIT 1");
+        $stmt->execute([$_SESSION['user_id']]);
+        $activeBatch = $stmt->fetch();
+
+        if ($activeBatch) {
+            $finishStmt = $pdo->prepare("UPDATE test_batches SET isFinished = TRUE WHERE id = ?");
+            $finishStmt->execute([$activeBatch['id']]);
+        }
+
+        header("Location: /tests/index.php");
+        exit;
+    } catch (PDOException $e) {
+        echo "<div class='alert alert-danger'>Ошибка базы данных: " . htmlspecialchars($e->getMessage()) . "</div>";
+    }
+}
+
 require_once '../api/config.php';
 
 // Проверка авторизации
@@ -15,142 +37,162 @@ $userId = $_SESSION['user_id'];
 $pageTitle = "Тесты сенсомоторных реакций";
 include_once '../includes/header.php';
 
-// Проверка активных приглашений на тесты для текущего пользователя
+// Проверка назначенных тестов для текущего пользователя
 try {
     $pdo = getDbConnection();
-    $stmt = $pdo->prepare("
-        SELECT i.*, g.name as group_name 
-        FROM test_invitations i
-        JOIN groups g ON i.group_id = g.id
-        WHERE i.user_id = ? AND i.is_completed = 0
-    ");
+    $stmt = $pdo->prepare("SELECT b.id, b.created_at, b.expert_id, u.name AS expert_name
+                           FROM test_batches b
+                           JOIN users u ON b.expert_id = u.id
+                           WHERE b.user_id = ? AND b.isFinished = FALSE
+                           ORDER BY b.created_at DESC LIMIT 1");
     $stmt->execute([$userId]);
-    $invitations = $stmt->fetchAll();
+    $activeBatch = $stmt->fetch();
+
+    $testsStmt = $pdo->prepare("SELECT tb.id, tb.test_type, tn.name AS test_name
+                                FROM tests_in_batches tb 
+                                LEFT JOIN test_names tn ON tb.test_type = tn.test_type
+                                WHERE tb.batch_id = ?
+                                ORDER BY tb.id ASC");
+    if ($activeBatch) {
+        $testsStmt->execute([$activeBatch['id']]);
+        $tests = $testsStmt->fetchAll();
+    } else {
+        $tests = [];
+    }
+
 } catch (PDOException $e) {
-    $invitations = [];
+    $activeBatch = null;
+    $tests = [];
 }
+
+// Проверка завершенных назначенных тестов
+$completedTests = [];
+if ($activeBatch) {
+    foreach ($tests as $test) {
+        $stmt = $pdo->prepare("SELECT id FROM test_sessions WHERE user_id = ? AND test_type = ? AND created_at >= ? LIMIT 1");
+        $stmt->execute([$userId, $test['test_type'], $activeBatch['created_at']]);
+        $completed = $stmt->fetch();
+
+        if ($completed) {
+            $completedTests[] = $test['test_type'];
+
+            $updateStmt = $pdo->prepare("UPDATE tests_in_batches SET isFinished = TRUE WHERE id = ?");
+            $updateStmt->execute([$test['id']]);
+        }
+    }
+
+    // Проверка, завершены ли все назначенные тесты
+    if (count($completedTests) === count($tests)) {
+        $showFinishButton = true;
+    }
+}
+
 ?>
 
 <div class="container py-4">
-    <div class="row">
+<?php if ($activeBatch): ?>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Назначенные вам тесты от <?php echo htmlspecialchars($activeBatch['expert_name']); ?></h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group mb-3">
+                    <?php foreach ($tests as $test): ?>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <?php echo htmlspecialchars($test['test_name'] ?: $test['test_type']); ?>
+                            <?php if (in_array($test['test_type'], $completedTests)): ?>
+                                <span class="text-success">Тест пройден &#x2713;</span>
+                            <?php else: ?>
+                                <a href="/tests/sensorimotor/<?php echo htmlspecialchars($test['test_type']); ?>.php" class="btn btn-success">Пройти тест</a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+
+                <?php if (isset($showFinishButton)): ?>
+                    <form method="post" action="">
+                        <button type="submit" name="finish_batch" class="btn btn-success">Завершить тесты</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Existing content of the page -->
+
+    <div class="row mb-4">
         <div class="col-md-12">
-            <h1 class="mb-4">Тесты сенсомоторных реакций</h1>
-
-            <?php if (!empty($invitations)): ?>
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Приглашения на тесты</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>У вас есть активные приглашения на прохождение тестов:</p>
-                        <div class="list-group">
-                            <?php foreach ($invitations as $invitation): ?>
-                                <a href="/tests/invitation.php?id=<?php echo $invitation['id']; ?>"
-                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5 class="mb-1">Приглашение от группы
-                                            "<?php echo htmlspecialchars($invitation['group_name']); ?>"</h5>
-                                        <p class="mb-1">Создано:
-                                            <?php echo date('d.m.Y H:i', strtotime($invitation['created_at'])); ?>
-                                        </p>
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">Пройти тесты</span>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Простые сенсомоторные реакции</h5>
                 </div>
-            <?php endif; ?>
-
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Простые сенсомоторные реакции</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
-                                            <h5 class="card-title">Реакция на свет</h5>
-                                            <p class="card-text">Тест измеряет скорость вашей реакции на световой
-                                                стимул.</p>
-                                            <a href="/tests/sensorimotor/light_reaction.php"
-                                                class="btn btn-primary">Пройти тест</a>
-                                        </div>
-                                    </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                                    <h5 class="card-title">Реакция на свет</h5>
+                                    <a href="/tests/sensorimotor/light_reaction.php" class="btn btn-primary">Пройти тест</a>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="fas fa-volume-up fa-3x text-info mb-3"></i>
-                                            <h5 class="card-title">Реакция на звук</h5>
-                                            <p class="card-text">Тест измеряет скорость вашей реакции на звуковой
-                                                стимул.</p>
-                                            <a href="/tests/sensorimotor/sound_reaction.php"
-                                                class="btn btn-primary">Пройти тест</a>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-volume-up fa-3x text-info mb-3"></i>
+                                    <h5 class="card-title">Реакция на звук</h5>
+                                    <a href="/tests/sensorimotor/sound_reaction.php" class="btn btn-primary">Пройти тест</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Сложные сенсомоторные реакции</h5>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Сложные сенсомоторные реакции</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-palette fa-3x text-success mb-3"></i>
+                                    <h5 class="card-title">Реакция на разные цвета</h5>
+                                    <a href="/tests/sensorimotor/color_reaction.php" class="btn btn-primary">Пройти тест</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row g-4">
-                                <div class="col-md-4">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="fas fa-palette fa-3x text-success mb-3"></i>
-                                            <h5 class="card-title">Реакция на разные цвета</h5>
-                                            <p class="card-text">Тест измеряет скорость вашей реакции на различные
-                                                цветовые стимулы.</p>
-                                            <a href="/tests/sensorimotor/color_reaction.php"
-                                                class="btn btn-primary">Пройти тест</a>
-                                        </div>
-                                    </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-headphones fa-3x text-danger mb-3"></i>
+                                    <h5 class="card-title">Звуковой сигнал и арифметика</h5>
+                                    <a href="/tests/sensorimotor/sound_arithmetic.php" class="btn btn-primary">Пройти тест</a>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="fas fa-headphones fa-3x text-danger mb-3"></i>
-                                            <h5 class="card-title">Звуковой сигнал и арифметика</h5>
-                                            <p class="card-text">Тест на скорость реакции при определении чётности числа
-                                                на слух.</p>
-                                            <a href="/tests/sensorimotor/sound_arithmetic.php"
-                                                class="btn btn-primary">Пройти тест</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
-                                            <h5 class="card-title">Визуальная арифметика</h5>
-                                            <p class="card-text">Тест на скорость реакции при определении чётности числа
-                                                визуально.</p>
-                                            <a href="/tests/sensorimotor/visual_arithmetic.php"
-                                                class="btn btn-primary">Пройти тест</a>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title">Визуальная арифметика</h5>
+                                    <a href="/tests/sensorimotor/visual_arithmetic.php" class="btn btn-primary">Пройти тест</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <?php if ($userRole === 'admin' || $userRole === 'expert'): ?>
+        </div>
+    </div>
+    <?php if ($userRole === 'admin' || $userRole === 'expert'): ?>
                 <div class="row mb-4">
                     <div class="col-md-12">
                         <div class="card shadow-sm">
@@ -163,11 +205,10 @@ try {
                                         <div class="card h-100">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                                                <h5 class="card-title">Управление приглашениями</h5>
-                                                <p class="card-text">Создание и отслеживание приглашений для прохождения
-                                                    тестов.</p>
-                                                <a href="/tests/manage_invitations.php"
-                                                    class="btn btn-success">Управление</a>
+                                                <h5 class="card-title">Назначение тестов пользователям</h5>
+                                                <p class="card-text">Назначение пользователям тестов для прохождения.</p>
+                                                <a href="../expert/add_tests_batch.php"
+                                                    class="btn btn-success">Назначить тесты</a>
                                             </div>
                                         </div>
                                     </div>
@@ -204,8 +245,6 @@ try {
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 </div>
 
 <?php include_once '../includes/footer.php'; ?>

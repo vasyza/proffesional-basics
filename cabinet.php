@@ -81,7 +81,29 @@ try {
 
 // Подключение заголовка
 include 'includes/header.php';
+
+// Проверяем, есть ли у пользователя незавершённые тесты
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) 
+    FROM test_batches 
+    WHERE user_id = ? AND isFinished = FALSE
+");
+$stmt->execute([$userId]);
+$hasTestBatch = (int)$stmt->fetchColumn() > 0;
 ?>
+
+<?php if ($hasTestBatch): ?>
+    <div class="container mt-4">
+        <div class="alert alert-success d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Вам были назначили тесты экспертом</strong>
+            </div>
+            <a href="../tests/index.php" class="btn btn-success">
+                Пройти сейчас
+            </a>
+        </div>
+    </div>
+<?php endif; ?>
 
 <div class="container py-5">
     <div class="row">
