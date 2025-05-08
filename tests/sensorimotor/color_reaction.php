@@ -9,6 +9,18 @@ if (!$isLoggedIn) {
     exit;
 }
 
+// Получаем список участников теста
+$respondents = [];
+try {
+    // Получаем подключение к базе данных
+    $pdo = getDbConnection();
+    $stmt = $pdo->query("SELECT user_name, test_date FROM color_respondents ORDER BY test_date DESC LIMIT 20");
+    $respondents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // В случае ошибки просто продолжаем без списка
+    error_log("Ошибка при получении списка участников: " . $e->getMessage());
+}
+
 $pageTitle = "Тест реакции на цвета";
 include_once '../../includes/header.php';
 ?>
@@ -94,6 +106,45 @@ include_once '../../includes/header.php';
                             <a href="/tests/index.php" class="btn btn-outline-primary">Вернуться к списку тестов</a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- раздел со списком участников -->
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Участники теста</h5>
+                </div>
+                <div class="card-body">
+                    <?php if (!empty($respondents)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Имя участника</th>
+                                        <th>Дата прохождения</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($respondents as $index => $respondent): ?>
+                                        <tr>
+                                            <td><?= $index + 1 ?></td>
+                                            <td><?= htmlspecialchars($respondent['user_name']) ?></td>
+                                            <td><?= date('d.m.Y H:i', strtotime($respondent['test_date'])) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-warning">Пока никто не прошел этот тест. Будьте первым!</div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -318,8 +369,10 @@ include_once '../../includes/header.php';
                 .then(data => {
                     if (data.success) {
                         alert('Результаты успешно сохранены!');
-                        saveResultsButton.disabled = true;
-                        saveResultsButton.textContent = 'Результаты сохранены';
+                        // Перенаправление на страницу результатов
+                        window.location.href = '/tests/results.php';
+                        //saveResultsButton.disabled = true;
+                        //saveResultsButton.textContent = 'Результаты сохранены';
                     } else {
                         alert('Ошибка при сохранении результатов: ' + data.message);
                     }
