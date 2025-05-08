@@ -20,13 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Получение и валидация данных
 $name = filter_var(trim($_POST['name']), FILTER_SANITIZE_STRING);
 $login = filter_var(trim($_POST['login']), FILTER_SANITIZE_STRING);
+$age = filter_var(trim($_POST['age']), FILTER_VALIDATE_INT, ['options' => ['min_range' => 12]]);
 $password = trim($_POST['password']);
 $password_confirm = trim($_POST['password_confirm'] ?? $_POST['confirm_password']);
 $terms = isset($_POST['terms']) ? true : false;
 $gender = isset($_POST['gender']) ? filter_var(trim($_POST['gender']), FILTER_SANITIZE_STRING) : null;
 
 // Проверка наличия всех обязательных полей
-if (empty($name) || empty($login) || empty($password) || empty($password_confirm)) {
+if (empty($name) || empty($login) || empty($password) || empty($password_confirm) || $age === false) {
     header('Location: /auth/register.php?error=' . urlencode("Все поля обязательны для заполнения"));
     exit;
 }
@@ -83,8 +84,8 @@ try {
 
     // Добавление пользователя в базу данных
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, login, pass, role, gender, created_at)
-        VALUES (:name, :login, :pass, :role, :gender, NOW())
+        INSERT INTO users (name, login, pass, role, gender, age, created_at)
+        VALUES (:name, :login, :pass, :role, :gender, :age, NOW())
     ");
 
     $stmt->execute([
@@ -92,7 +93,8 @@ try {
         ':login' => $login,
         ':pass' => $hashed_password,
         ':role' => $role,
-        ':gender' => $gender
+        ':gender' => $gender,
+        ':age' => $age
     ]);
 
     // Получение ID нового пользователя
@@ -107,6 +109,7 @@ try {
     $_SESSION['user_login'] = $login;
     $_SESSION['user_role'] = $role;
     $_SESSION['user_gender'] = $gender;
+    $_SESSION['user_age'] = $age;
 
     // Перенаправляем на страницу личного кабинета
     header('Location: /cabinet.php?success=' . urlencode("Регистрация успешно завершена!"));
