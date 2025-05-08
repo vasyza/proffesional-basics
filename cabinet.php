@@ -170,6 +170,10 @@ $hasTestBatch = (int)$stmt->fetchColumn() > 0;
                         <div class="col-md-8"><?php echo htmlspecialchars('' . $user['bio']); ?></div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Возраст:</div>
+                        <div class="col-md-8"><?php echo htmlspecialchars('' . $user['age']); ?></div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-4 fw-bold">Пол:</div>
                         <div class="col-md-8"><?php echo htmlspecialchars('' . $user['gender']); ?></div>
                     </div>
