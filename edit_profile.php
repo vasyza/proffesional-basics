@@ -66,6 +66,10 @@ include_once 'includes/header.php';
                             <label for="name" class="form-label">Имя <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Возраст <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="age" name="age" value="<?php echo htmlspecialchars($user['age'] ?? ''); ?>" min="12" required>
+                        </div>
                         
                         <!-- Выпадающий список для выбора пола -->
                         <div class="mb-3">
@@ -130,6 +134,7 @@ include_once 'includes/header.php';
                             ?>
                         </span>
                     </p>
+                    <p><strong>Возраст:</strong> <?php echo $user['age'] ?? 'Не указан'; ?></p>
                     <p><strong>Пол:</strong> 
                         <?php 
                         switch ($user['gender'] ?? '') {
