@@ -74,6 +74,26 @@ include_once '../includes/admin_header.php';
                             Пожалуйста, подтвердите пароль
                         </div>
                     </div>
+                    
+                    <div class="col-md-6">
+                        <label for="age" class="form-label">Возраст</label>
+                        <input type="number" class="form-control" id="age" name="age" min="12" required>
+                        <div class="invalid-feedback">
+                            Пожалуйста, введите возраст (от 12 лет)
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Пол</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="">Выберите пол</option>
+                            <option value="мужской">мужской</option>
+                            <option value="женский">женский</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Пожалуйста, выберите пол
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <label for="role" class="form-label">Роль пользователя</label>
                         <select class="form-select" id="role" name="role" required>
