@@ -78,6 +78,21 @@ include_once '../includes/admin_header.php';
                     </div>
 
                     <div class="col-md-6">
+                        <label for="age" class="form-label">Возраст</label>
+                        <input type="number" class="form-control" id="age" name="age" value="<?php echo htmlspecialchars($user['age'] ?? ''); ?>" min="12" required>
+                        <div class="invalid-feedback">Пожалуйста, введите возраст (от 12)</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Пол</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="мужской" <?php if (($user['gender'] ?? '') === 'мужской') echo 'selected'; ?>>мужской</option>
+                            <option value="женский" <?php if (($user['gender'] ?? '') === 'женский') echo 'selected'; ?>>женский</option>
+                        </select>
+                        <div class="invalid-feedback">Пожалуйста, выберите пол</div>
+                    </div>
+
+                    <div class="col-md-6">
                         <label for="role" class="form-label">Роль</label>
                         <select class="form-select" id="role" name="role" required>
                             <option value="admin" <?php if ($user['role'] === 'admin') echo 'selected'; ?>>Администратор</option>
