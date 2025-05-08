@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     gender VARCHAR(20) DEFAULT 'мужской' CHECK (gender = 'мужской' OR gender = 'женский'),
+    age INTEGER CHECK (age > 11),
     isPublic BOOLEAN DEFAULT FALSE
 );
 
