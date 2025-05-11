@@ -14,7 +14,7 @@ $respondents = [];
 try {
     // Получаем подключение к базе данных
     $pdo = getDbConnection();
-    $stmt = $pdo->query("SELECT user_name, test_date FROM color_respondents ORDER BY test_date DESC LIMIT 20");
+    $stmt = $pdo->query("SELECT user_name, test_date FROM color_respondents WHERE isPublic = TRUE ORDER BY test_date DESC LIMIT 20");
     $respondents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     // В случае ошибки просто продолжаем без списка
