@@ -33,6 +33,23 @@ if (!$isLoggedIn) {
 
 $userRole = $_SESSION['user_role'];
 $userId = $_SESSION['user_id'];
+$username = $_SESSION['user_name'] ?? '';
+
+// Получаем текущее состояние публичности из light_respondents
+$isPublicProfile = false;
+try {
+    $pdo = getDbConnection();
+    $stmt = $pdo->prepare("SELECT isPublic FROM light_respondents WHERE user_name = ? ORDER BY test_date DESC LIMIT 1");
+    $stmt->execute([$username]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC); // Явно указываем тип выборки
+    
+    // Проверяем наличие ключа в результате
+    if ($result && array_key_exists('isPublic', $result)) {
+        $isPublicProfile = (bool)$result['isPublic'];
+    }
+} catch (PDOException $e) {
+    error_log("Ошибка при получении настроек публичности: " . $e->getMessage());
+}
 
 $pageTitle = "Тесты сенсомоторных реакций";
 include_once '../includes/header.php';
@@ -87,6 +104,50 @@ if ($activeBatch) {
 }
 
 ?>
+
+<div class="container py-4">
+    <!-- Тумблер публичного профиля -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Настройки профиля</h5>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="publicProfileToggle" <?= $isPublicProfile ? 'checked' : '' ?>>
+                <label class="form-check-label" for="publicProfileToggle">Публичный профиль</label>
+            </div>
+        </div>
+        <div class="card-body">
+            <p>Когда тумблер включен, ваши результаты тестов будут видны другим пользователям.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Обработчик изменения тумблера
+        document.getElementById('publicProfileToggle').addEventListener('change', function() {
+            const isPublic = this.checked;
+            
+            fetch('/api/update_profile_visibility.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    is_public: isPublic
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Ошибка при сохранении настроек');
+                    this.checked = !this.checked; // Возвращаем в предыдущее состояние
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка соединения');
+                this.checked = !this.checked;
+            });
+        });
+    </script>
 
 <div class="container py-4">
     <?php
