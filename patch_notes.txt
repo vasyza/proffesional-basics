@@ -180,3 +180,18 @@
 
     --tests/test_batch.php; expert/add_teats_batch.php, pick_tests.php--
     feat: Копирование ссылки-приглашения на назначенные тесты
+
+        Dan
+
+    --sql/test_tables--
+    idk: Добавлено поле isPublic в таблицы респондентов
+
+    --tests/sensorimotor/
+    /color_reaction.php, light_reaction.php, sound_arithmetic.php, sound_reation.php, visual_arithmetic.php--
+    idk: Корректный список респондентов
+
+    --tests/index.php--
+    feat: Добавлен тумблер приватности (будет ли юзер появляться в списке респондентов)
+
+    --api/update_profile_visibility.php--
+    idk: Новый скрипт сеттер для isPublic в таблицах респондентов
