@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS light_respondents (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP NOT NULL,
+    isPublic BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -114,6 +115,7 @@ CREATE TABLE IF NOT EXISTS sound_respondents (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP NOT NULL,
+    isPublic BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -121,6 +123,7 @@ CREATE TABLE IF NOT EXISTS color_respondents (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP NOT NULL,
+    isPublic BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -128,6 +131,7 @@ CREATE TABLE IF NOT EXISTS s_arith_respondents (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP NOT NULL,
+    isPublic BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -135,6 +139,7 @@ CREATE TABLE IF NOT EXISTS v_arith_respondents (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP NOT NULL,
+    isPublic BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
