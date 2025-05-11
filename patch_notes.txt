@@ -166,3 +166,14 @@
 
     --tests/expert_results.php--
     feat: Список всех пользователей и их результатов тестов (Для экспертов и админов)
+
+11.5.25      Anderaf
+
+    --tests/index.php--
+    feat: Карточка с назначенными тестами теперь отправляет пользователей на страницу test_batch.php
+
+    --tests/test_batch.php--
+    feat: Новая страница, которая направляет пользователя на следующий тест
+
+    --tests/color_reaction.php, light_reaction.php, sound_arithmetic.php, sound_reaction.php, visual_arithmetic.php--
+    feat: Тесты теперь отправляют пользователей на страницу test_batch.php, если в ссылке есть параметр batch_id

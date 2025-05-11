@@ -59,7 +59,6 @@ try {
     } else {
         $tests = [];
     }
-
 } catch (PDOException $e) {
     $activeBatch = null;
     $tests = [];
@@ -90,7 +89,8 @@ if ($activeBatch) {
 ?>
 
 <div class="container py-4">
-<?php if ($activeBatch): ?>
+    <?php
+    if ($activeBatch): ?>
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0">Назначенные вам тесты от <?php echo htmlspecialchars($activeBatch['expert_name']); ?></h5>
@@ -101,9 +101,9 @@ if ($activeBatch) {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <?php echo htmlspecialchars($test['test_name'] ?: $test['test_type']); ?>
                             <?php if (in_array($test['test_type'], $completedTests)): ?>
-                                <span class="text-success">Тест пройден &#x2713;</span>
+                                <span class="text-success">Пройдено &#x2713;</span>
                             <?php else: ?>
-                                <a href="/tests/sensorimotor/<?php echo htmlspecialchars($test['test_type']); ?>.php" class="btn btn-success">Пройти тест</a>
+                                <span class="text-danger">Не пройдено</span>
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
@@ -113,12 +113,12 @@ if ($activeBatch) {
                     <form method="post" action="">
                         <button type="submit" name="finish_batch" class="btn btn-success">Завершить тесты</button>
                     </form>
+                <?php else: ?>
+                    <a href="/tests/test_batch.php?batch_id=<?php echo $activeBatch['id']; ?>" class="btn btn-primary">Пройти тесты</a>
                 <?php endif; ?>
             </div>
         </div>
     <?php endif; ?>
-
-    <!-- Existing content of the page -->
 
     <div class="row mb-4">
         <div class="col-md-12">
@@ -193,58 +193,58 @@ if ($activeBatch) {
         </div>
     </div>
     <?php if ($userRole === 'admin' || $userRole === 'expert'): ?>
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0">Инструменты для экспертов/администраторов</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-4">
-                                    <div class="col-md-6">
-                                        <div class="card h-100">
-                                            <div class="card-body text-center">
-                                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                                                <h5 class="card-title">Назначение тестов пользователям</h5>
-                                                <p class="card-text">Назначение пользователям тестов для прохождения.</p>
-                                                <a href="../expert/add_tests_batch.php"
-                                                    class="btn btn-success">Назначить тесты</a>
-                                            </div>
-                                        </div>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Инструменты для экспертов/администраторов</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                        <h5 class="card-title">Назначение тестов пользователям</h5>
+                                        <p class="card-text">Назначение пользователям тестов для прохождения.</p>
+                                        <a href="../expert/add_tests_batch.php"
+                                            class="btn btn-success">Назначить тесты</a>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="card h-100">
-                                            <div class="card-body text-center">
-                                                <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
-                                                <h5 class="card-title">Результаты тестирований</h5>
-                                                <p class="card-text">Просмотр статистики и результатов прохождения тестов
-                                                    пользователями.</p>
-                                                <a href="/tests/results.php" class="btn btn-success">Просмотр
-                                                    результатов</a>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
+                                        <h5 class="card-title">Результаты тестирований</h5>
+                                        <p class="card-text">Просмотр статистики и результатов прохождения тестов
+                                            пользователями.</p>
+                                        <a href="/tests/results.php" class="btn btn-success">Просмотр
+                                            результатов</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
-            <!-- Раздел с результатами пользователя -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0">Мои результаты</h5>
-                        </div>
-                        <div class="card-body">
-                            <p>Здесь вы можете просмотреть свои результаты по всем пройденным тестам.</p>
-                            <a href="/tests/my_results.php" class="btn btn-info">Просмотреть мои результаты</a>
-                        </div>
-                    </div>
+    <!-- Раздел с результатами пользователя -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Мои результаты</h5>
+                </div>
+                <div class="card-body">
+                    <p>Здесь вы можете просмотреть свои результаты по всем пройденным тестам.</p>
+                    <a href="/tests/my_results.php" class="btn btn-info">Просмотреть мои результаты</a>
                 </div>
             </div>
+        </div>
+    </div>
 </div>
 
 <?php include_once '../includes/footer.php'; ?>

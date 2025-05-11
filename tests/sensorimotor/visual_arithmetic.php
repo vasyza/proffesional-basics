@@ -340,37 +340,44 @@ include_once '../../includes/header.php';
         }
 
         function saveResults() {
-            const testData = {
-                test_type: 'visual_arithmetic',
-                results: results,
-                average_time: parseFloat(averageTime.textContent),
-                accuracy: parseFloat(accuracy.textContent)
-            };
+    const urlParams = new URLSearchParams(window.location.search);
+    const batchId = urlParams.get('batch_id');
 
-            fetch('/api/save_test_results.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(testData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Результаты успешно сохранены!');
-                        // Перенаправление на страницу результатов
-                        window.location.href = '/tests/results.php';
-                        //saveResultsButton.disabled = true;
-                        //saveResultsButton.textContent = 'Результаты сохранены';
-                    } else {
-                        alert('Ошибка при сохранении результатов: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при сохранении результатов');
-                });
+    const testData = {
+        test_type: 'visual_arithmetic',
+        results: results,
+        average_time: parseFloat(averageTime.textContent),
+        accuracy: parseFloat(accuracy.textContent)
+    };
+
+    fetch('/api/save_test_results.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(testData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Результаты успешно сохранены!');
+            
+            if (batchId) {
+                window.location.href = `/tests/test_batch.php?batch_id=${batchId}`;
+            } else {
+                window.location.href = '/tests/results.php';
+            }
+
+        } else {
+            alert('Ошибка при сохранении результатов: ' + data.message);
         }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при сохранении результатов');
+    });
+}
+
     });
 </script>
 

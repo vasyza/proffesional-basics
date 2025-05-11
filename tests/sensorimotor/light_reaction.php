@@ -261,33 +261,41 @@ include_once '../../includes/header.php';
         }
 
         function saveResults() {
-            // Отправка данных на сервер
-            fetch('/api/save_test_results.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    test_type: 'light_reaction',
-                    results: results,
-                    average_time: parseInt(averageTime.textContent)
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Результаты успешно сохранены!');
-                    // Перенаправление на страницу результатов
-                    window.location.href = '/tests/results.php';
-                } else {
-                    alert('Ошибка при сохранении результатов: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Произошла ошибка при сохранении результатов');
-            });
+    const urlParams = new URLSearchParams(window.location.search);
+    const batchId = urlParams.get('batch_id');
+
+    // Отправка данных на сервер
+    fetch('/api/save_test_results.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            test_type: 'light_reaction',
+            results: results,
+            average_time: parseInt(averageTime.textContent)
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Результаты успешно сохранены!');
+            
+            if (batchId) {
+                window.location.href = `/tests/test_batch.php?batch_id=${batchId}`;
+            } else {
+                window.location.href = '/tests/results.php';
+            }
+
+        } else {
+            alert('Ошибка при сохранении результатов: ' + data.message);
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при сохранении результатов');
+    });
+}
     });
 </script>
 
