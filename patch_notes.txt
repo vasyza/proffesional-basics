@@ -177,3 +177,6 @@
 
     --tests/color_reaction.php, light_reaction.php, sound_arithmetic.php, sound_reaction.php, visual_arithmetic.php--
     feat: Тесты теперь отправляют пользователей на страницу test_batch.php, если в ссылке есть параметр batch_id
+
+    --tests/test_batch.php; expert/add_teats_batch.php, pick_tests.php--
+    feat: Копирование ссылки-приглашения на назначенные тесты

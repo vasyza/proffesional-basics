@@ -102,7 +102,7 @@ if (count($completedTests) === count($tests)) {
 ?>
 
 <div class="container py-4">
-    <h2>Назначенные тесты<?php echo $batchId; ?></h2>
+    <h2>Назначенные тесты</h2>
     <ul class="list-group mb-3">
         <?php foreach ($tests as $test): ?>
             <li class="list-group-item d-flex justify-content-between align-items-center">

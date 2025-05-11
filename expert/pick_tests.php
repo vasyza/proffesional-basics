@@ -45,6 +45,9 @@ include '../includes/header.php';
         <button type="button" id="add-test" class="btn btn-outline-secondary mb-3">Добавить тест</button>
         <button type="button" id="remove-test" class="btn btn-outline-danger mb-3">Удалить последний тест</button>
         <button type="submit" name="submit" class="btn btn-success">Выбрать</button>
+        <div id="copy-link-container" class="mt-3" style="display: none;">
+            <button type="button" id="copy-link" class="btn btn-primary">Скопировать ссылку-приглашение на прохождение тестов</button>
+        </div>
     </form>
 </div>
 
@@ -101,6 +104,16 @@ if (isset($_POST['submit'])) {
             $pdo->commit();
 
             echo "<div class='alert alert-success'>Тесты успешно назначены пользователю.</div>";
+            echo "<script>
+                document.getElementById('copy-link-container').style.display = 'block';
+                const copyLinkButton = document.getElementById('copy-link');
+                copyLinkButton.addEventListener('click', function() {
+                    const link = 'http://localhost:3000/tests/test_batch.php?batch_id=' + $batchId;
+                    navigator.clipboard.writeText(link);
+                    alert('Ссылка скопирована: ' + link);
+                });
+            </script>";
+
         } catch (PDOException $e) {
             $pdo->rollBack();
             echo "<div class='alert alert-danger'>Ошибка базы данных: " . htmlspecialchars($e->getMessage()) . "</div>";

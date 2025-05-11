@@ -74,6 +74,17 @@ include '../includes/header.php';
                                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                                     <td>
                                         <a href="pick_tests.php?user_id=<?php echo $user['id']; ?>" class="btn btn-outline-primary">Выбрать тесты</a>
+                                        <?php
+                                        $stmt = $pdo->prepare("SELECT id FROM test_batches WHERE user_id = ? AND isFinished = FALSE ORDER BY created_at DESC LIMIT 1");
+                                        $stmt->execute([$user['id']]);
+                                        $batch = $stmt->fetch();
+
+                                        if ($batch) {
+                                            $batchId = $batch['id'];
+                                            $link = "http://localhost:3000/tests/test_batch.php?batch_id=" . $batchId;
+                                            echo "<button class='btn btn-secondary copy-link' data-link='$link'>Скопировать ссылку на тесты</button>";
+                                        }
+                                        ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -86,5 +97,20 @@ include '../includes/header.php';
         <div class="alert alert-info">Пользователи не найдены.</div>
     <?php endif; ?>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.copy-link').forEach(button => {
+            button.addEventListener('click', function() {
+                const link = this.dataset.link;
+                navigator.clipboard.writeText(link).then(() => {
+                    alert('Ссылка скопирована: ' + link);
+                }).catch(err => {
+                    console.error('Ошибка копирования: ', err);
+                });
+            });
+        });
+    });
+</script>
 
 <?php include '../includes/footer.php'; ?>
