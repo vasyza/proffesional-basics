@@ -280,7 +280,7 @@ if ($activeBatch) {
                                         <h5 class="card-title">Результаты тестирований</h5>
                                         <p class="card-text">Просмотр статистики и результатов прохождения тестов
                                             пользователями.</p>
-                                        <a href="/tests/results.php" class="btn btn-success">Просмотр
+                                        <a href="/tests/expert_results.php" class="btn btn-success">Просмотр
                                             результатов</a>
                                     </div>
                                 </div>
