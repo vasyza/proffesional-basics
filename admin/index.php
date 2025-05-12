@@ -192,6 +192,26 @@ try {
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+    <div class="card bg-warning text-dark mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-user-tag fa-3x"></i>
+                </div>
+                <div>
+                    <h5 class="card-title mb-0">Запросы на роли</h5>
+                    <h2 class="mb-0">🔍</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <a href="/admin/role_requests.php" class="text-dark text-decoration-none">
+                Управление запросами <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
             <!-- <div class="col-md-3">
                 <div class="card bg-warning text-dark mb-3">
                     <div class="card-body">

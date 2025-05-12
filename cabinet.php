@@ -147,6 +147,14 @@ $hasTestBatch = (int)$stmt->fetchColumn() > 0;
                             <i class="fas fa-edit me-1"></i> Редактировать профиль
                         </a>
                     </div>
+
+                    <?php if ($userRole === 'user'): ?>
+                        <div class="mt-3">
+                            <a href="/role_request.php" class="btn btn-warning btn-sm">
+                                <i class="fas fa-user-tag me-1"></i> Запросить роль
+                            </a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

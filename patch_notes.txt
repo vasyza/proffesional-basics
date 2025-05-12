@@ -201,3 +201,18 @@
 
     --tests/index.php--
     fix: Кнопка результатов для эксперта теперь отправляет на правильную страницу
+
+    --api/db_init.sql--
+    feat: Таблица запросов на роль
+
+    --api/add_request.php, update_request.php--
+    feat: Скрипты для добавления и обновления запросов на роль
+
+    --role_request.php--
+    feat: Отправка запросов на роль пользователем
+
+    --cabinet.php--
+    feat: Кнопка перехода на страницу role_request.php
+
+    --admin/index.php, manage_request.php, role_requests.php--
+    feat: Управление запросами на роль для админов
