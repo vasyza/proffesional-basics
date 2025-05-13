@@ -150,6 +150,45 @@ if ($testType === 'visual_arithmetic' && !empty($username)) {
         $stmt->execute([$sessionId, $trialNumber, $stimulusValue, $responseValue, $reactionTime, $isCorrect]);
     }
 
+    // Нормирование результатов
+    $normalizedResult = null;
+    if ($averageTime !== null) {
+        // Получаем статистику по группе для данного теста
+        $stmt = $pdo->prepare("
+            SELECT 
+                AVG(average_time) as group_avg_time,
+                STDDEV(average_time) as group_std_time
+            FROM test_sessions
+            WHERE test_type = ?
+        ");
+        $stmt->execute([$testType]);
+        $groupStats = $stmt->fetch();
+
+        if ($groupStats && $groupStats['group_avg_time'] !== null && $groupStats['group_std_time'] !== null) {
+            $groupAvg = $groupStats['group_avg_time'];
+            $groupStd = $groupStats['group_std_time'];
+            
+            // Определяем уровень результата пользователя
+            if ($averageTime >= $groupAvg + $groupStd) {
+                $normalizedResult = 1; // Худшие показатели
+            } elseif ($averageTime <= $groupAvg - $groupStd) {
+                $normalizedResult = 3; // Лучшие показатели
+            } else {
+                $normalizedResult = 2; // Средние показатели
+            }
+        }
+    }
+
+    // Обновляем запись теста с нормированным результатом
+    if ($normalizedResult !== null) {
+        $stmt = $pdo->prepare("
+            UPDATE test_sessions 
+            SET normalized_result = ? 
+            WHERE id = ?
+        ");
+        $stmt->execute([$normalizedResult, $sessionId]);
+    }
+
     // 4. Обновление записи о приглашении на тест, если тест был запущен по приглашению
     if (isset($_SESSION['invitation_id'])) {
         $invitationId = $_SESSION['invitation_id'];
@@ -183,7 +222,12 @@ if ($testType === 'visual_arithmetic' && !empty($username)) {
     // Фиксация транзакции
     $pdo->commit();
 
-    echo json_encode(['success' => true, 'session_id' => $sessionId]);
+     echo json_encode([
+        'success' => true, 
+        'session_id' => $sessionId,
+        'normalized_result' => $normalizedResult,
+        'group_stats' => isset($groupStats) ? $groupStats : null
+    ]);
 
 } catch (PDOException $e) {
     // Откат транзакции в случае ошибки
