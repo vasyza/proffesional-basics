@@ -34,84 +34,84 @@ try {
     $pdo->beginTransaction();
 
     // Добавление пользователя в таблицу light_respondents (если его там еще нет)
-if ($testType === 'light_reaction' && !empty($username)) {
-    // Проверяем, есть ли уже пользователь в таблице
-    $stmt = $pdo->prepare("SELECT id FROM light_respondents WHERE user_name = ?");
-    $stmt->execute([$username]);
-    
-    if ($stmt->rowCount() == 0) {
-        // Если пользователя нет, добавляем его
-        $insertStmt = $pdo->prepare("
+    if ($testType === 'light_reaction' && !empty($username)) {
+        // Проверяем, есть ли уже пользователь в таблице
+        $stmt = $pdo->prepare("SELECT id FROM light_respondents WHERE user_name = ?");
+        $stmt->execute([$username]);
+
+        if ($stmt->rowCount() == 0) {
+            // Если пользователя нет, добавляем его
+            $insertStmt = $pdo->prepare("
             INSERT INTO light_respondents (user_name, test_date) 
             VALUES (?, NOW())
         ");
-        $insertStmt->execute([$username]);
+            $insertStmt->execute([$username]);
+        }
     }
-}
 
 // Добавление пользователя в таблицу sound_respondents (если его там еще нет)
-if ($testType === 'sound_reaction' && !empty($username)) {
-    // Проверяем, есть ли уже пользователь в таблице
-    $stmt = $pdo->prepare("SELECT id FROM sound_respondents WHERE user_name = ?");
-    $stmt->execute([$username]);
-    
-    if ($stmt->rowCount() == 0) {
-        // Если пользователя нет, добавляем его
-        $insertStmt = $pdo->prepare("
+    if ($testType === 'sound_reaction' && !empty($username)) {
+        // Проверяем, есть ли уже пользователь в таблице
+        $stmt = $pdo->prepare("SELECT id FROM sound_respondents WHERE user_name = ?");
+        $stmt->execute([$username]);
+
+        if ($stmt->rowCount() == 0) {
+            // Если пользователя нет, добавляем его
+            $insertStmt = $pdo->prepare("
             INSERT INTO sound_respondents (user_name, test_date) 
             VALUES (?, NOW())
         ");
-        $insertStmt->execute([$username]);
+            $insertStmt->execute([$username]);
+        }
     }
-}
 
 // Добавление пользователя в таблицу color_respondents (если его там еще нет)
-if ($testType === 'color_reaction' && !empty($username)) {
-    // Проверяем, есть ли уже пользователь в таблице
-    $stmt = $pdo->prepare("SELECT id FROM color_respondents WHERE user_name = ?");
-    $stmt->execute([$username]);
-    
-    if ($stmt->rowCount() == 0) {
-        // Если пользователя нет, добавляем его
-        $insertStmt = $pdo->prepare("
+    if ($testType === 'color_reaction' && !empty($username)) {
+        // Проверяем, есть ли уже пользователь в таблице
+        $stmt = $pdo->prepare("SELECT id FROM color_respondents WHERE user_name = ?");
+        $stmt->execute([$username]);
+
+        if ($stmt->rowCount() == 0) {
+            // Если пользователя нет, добавляем его
+            $insertStmt = $pdo->prepare("
             INSERT INTO color_respondents (user_name, test_date) 
             VALUES (?, NOW())
         ");
-        $insertStmt->execute([$username]);
+            $insertStmt->execute([$username]);
+        }
     }
-}
 
 // Добавление пользователя в таблицу s_arith_respondents (если его там еще нет)
-if ($testType === 'sound_arithmetic' && !empty($username)) {
-    // Проверяем, есть ли уже пользователь в таблице
-    $stmt = $pdo->prepare("SELECT id FROM s_arith_respondents WHERE user_name = ?");
-    $stmt->execute([$username]);
-    
-    if ($stmt->rowCount() == 0) {
-        // Если пользователя нет, добавляем его
-        $insertStmt = $pdo->prepare("
+    if ($testType === 'sound_arithmetic' && !empty($username)) {
+        // Проверяем, есть ли уже пользователь в таблице
+        $stmt = $pdo->prepare("SELECT id FROM s_arith_respondents WHERE user_name = ?");
+        $stmt->execute([$username]);
+
+        if ($stmt->rowCount() == 0) {
+            // Если пользователя нет, добавляем его
+            $insertStmt = $pdo->prepare("
             INSERT INTO s_arith_respondents (user_name, test_date) 
             VALUES (?, NOW())
         ");
-        $insertStmt->execute([$username]);
+            $insertStmt->execute([$username]);
+        }
     }
-}
 
 // Добавление пользователя в таблицу v_arith_respondents (если его там еще нет)
-if ($testType === 'visual_arithmetic' && !empty($username)) {
-    // Проверяем, есть ли уже пользователь в таблице
-    $stmt = $pdo->prepare("SELECT id FROM v_arith_respondents WHERE user_name = ?");
-    $stmt->execute([$username]);
-    
-    if ($stmt->rowCount() == 0) {
-        // Если пользователя нет, добавляем его
-        $insertStmt = $pdo->prepare("
+    if ($testType === 'visual_arithmetic' && !empty($username)) {
+        // Проверяем, есть ли уже пользователь в таблице
+        $stmt = $pdo->prepare("SELECT id FROM v_arith_respondents WHERE user_name = ?");
+        $stmt->execute([$username]);
+
+        if ($stmt->rowCount() == 0) {
+            // Если пользователя нет, добавляем его
+            $insertStmt = $pdo->prepare("
             INSERT INTO v_arith_respondents (user_name, test_date) 
             VALUES (?, NOW())
         ");
-        $insertStmt->execute([$username]);
+            $insertStmt->execute([$username]);
+        }
     }
-}
 
     // Создание записи о тестировании
     $stmt = $pdo->prepare("
@@ -167,7 +167,7 @@ if ($testType === 'visual_arithmetic' && !empty($username)) {
         if ($groupStats && $groupStats['group_avg_time'] !== null && $groupStats['group_std_time'] !== null) {
             $groupAvg = $groupStats['group_avg_time'];
             $groupStd = $groupStats['group_std_time'];
-            
+
             // Определяем уровень результата пользователя
             if ($averageTime >= $groupAvg + $groupStd) {
                 $normalizedResult = 1; // Худшие показатели
@@ -222,8 +222,8 @@ if ($testType === 'visual_arithmetic' && !empty($username)) {
     // Фиксация транзакции
     $pdo->commit();
 
-     echo json_encode([
-        'success' => true, 
+    echo json_encode([
+        'success' => true,
         'session_id' => $sessionId,
         'normalized_result' => $normalizedResult,
         'group_stats' => isset($groupStats) ? $groupStats : null
