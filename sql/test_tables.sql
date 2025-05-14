@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS test_sessions (
     average_time FLOAT,
     accuracy FLOAT,
     created_at TIMESTAMP NOT NULL,
+    normalized_result INTEGER,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
