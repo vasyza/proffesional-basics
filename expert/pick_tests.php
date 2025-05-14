@@ -23,8 +23,9 @@ $testTypes = [
     'sound_arithmetic' => 'Звуковой сигнал и арифметика',
     'visual_arithmetic' => 'Визуальная арифметика',
     'moving_object_simple' => 'Простая реакция на движущийся объект',
-    'moving_object_complex' => 'Сложная реакция на движущийся объект'
-
+    'moving_object_complex' => 'Сложная реакция на движущийся объект',
+    'analog_tracking' => 'Аналоговое слежение',
+    'pursuit_tracking' => 'Слежение с преследованием'
 ];
 
 $pageTitle = "Выбор тестов для пользователя";

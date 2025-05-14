@@ -68,20 +68,14 @@ try {
                 SELECT ?, NOW() FROM users WHERE id = ? LIMIT 1
             ");
 
-            $stmtUserPublic = $pdo->prepare("SELECT ispublic FROM users WHERE id = ?");
-            $stmtUserPublic->execute([$userId]);
-            $userPublicStatus = $stmtUserPublic->fetchColumn();
-            $isPublicForRespondent = $userPublicStatus;
-
             $insertStmt = $pdo->prepare("
                 INSERT INTO " . $respondentTable . " (user_name, test_date)
                 VALUES (?, NOW())
             ");
             $insertStmt->execute([$username]);
         } else {
-             // Опционально: обновить test_date, если пользователь проходит тест повторно
-             $updateStmt = $pdo->prepare("UPDATE " . $respondentTable . " SET test_date = NOW() WHERE user_name = ?");
-             $updateStmt->execute([$username]);
+            $updateStmt = $pdo->prepare("UPDATE " . $respondentTable . " SET test_date = NOW() WHERE user_name = ?");
+            $updateStmt->execute([$username]);
         }
     }
 
@@ -90,7 +84,8 @@ try {
         INSERT INTO test_sessions (user_id, test_type, average_time, accuracy, created_at)
         VALUES (?, ?, ?, ?, NOW())
     ");
-    $stmt->execute([$userId, $testType, $averageTime, $accuracy]);
+
+    $stmt->execute([$userId, $testType, ($testType === 'analog_tracking' || $testType === 'pursuit_tracking' ? null : $averageTime), $accuracy]);
     $sessionId = $pdo->lastInsertId();
 
     // Сохранение результатов каждой попытки
@@ -113,13 +108,46 @@ try {
         }
 
         $responseValue = $result['response'] ?? null;
-        $reactionTime = $result['reaction_time'];
+        $reactionTime = key_exists('reaction_time', $result) ? $result['reaction_time'] : null;
         $isCorrect = isset($result['is_correct']) ? ($result['is_correct'] ? 1 : 0) : null;
         if ($trialNumber === null || $reactionTime === null || $isCorrect === null) {
             continue;
         }
 
         $stmt->execute([$sessionId, $trialNumber, $stimulusValue, $responseValue, $reactionTime, $isCorrect]);
+    }
+
+    $normalizedResult = null;
+    if ($accuracy !== null) {
+        $stmtNorm = $pdo->prepare("
+            SELECT
+                AVG(accuracy) as group_avg_accuracy,
+                STDDEV(accuracy) as group_std_accuracy
+            FROM test_sessions
+            WHERE test_type = ? AND accuracy IS NOT NULL
+        ");
+        $stmtNorm->execute([$testType]);
+        $groupStats = $stmtNorm->fetch();
+
+        if ($groupStats && $groupStats['group_avg_accuracy'] !== null && $groupStats['group_std_accuracy'] !== null && $groupStats['group_std_accuracy'] > 0) {
+            $groupAvg = (float)$groupStats['group_avg_accuracy'];
+            $groupStd = (float)$groupStats['group_std_accuracy'];
+
+            if ($accuracy >= $groupAvg + $groupStd) { // Лучше среднего
+                $normalizedResult = 3;
+            } elseif ($accuracy <= $groupAvg - $groupStd) { // Хуже среднего
+                $normalizedResult = 1;
+            } else { // В пределах среднего
+                $normalizedResult = 2;
+            }
+        } elseif ($groupStats && $groupStats['group_avg_accuracy'] !== null && ($groupStats['group_std_accuracy'] == 0)) {
+            $normalizedResult = 2; // Средний результат, если мало данных
+        }
+
+        if ($normalizedResult !== null) {
+            $stmtUpdateNorm = $pdo->prepare("UPDATE test_sessions SET normalized_result = ? WHERE id = ?");
+            $stmtUpdateNorm->execute([$normalizedResult, $sessionId]);
+        }
     }
 
     $normalizedResult = null;
@@ -146,19 +174,17 @@ try {
                 $normalizedResult = 2;
             }
         } elseif ($groupStats && $groupStats['group_avg_time'] !== null && ($groupStats['group_std_time'] == 0)) {
-            // Если стандартное отклонение 0 или null (мало данных или все одинаковые),
-            // можно установить средний результат или специфическое значение.
             $normalizedResult = 2;
         }
-    }
 
-    if ($normalizedResult !== null) {
-        $stmtUpdateNorm = $pdo->prepare("
+        if ($normalizedResult !== null) {
+            $stmtUpdateNorm = $pdo->prepare("
             UPDATE test_sessions 
             SET normalized_result = ? 
             WHERE id = ?
         ");
-        $stmtUpdateNorm->execute([$normalizedResult, $sessionId]);
+            $stmtUpdateNorm->execute([$normalizedResult, $sessionId]);
+        }
     }
 
     // Обновление записи о приглашении на тест (эта логика остается)
@@ -206,7 +232,6 @@ try {
         }
     }
 
-    // Фиксация транзакции
     $pdo->commit();
 
     echo json_encode([

@@ -311,6 +311,49 @@ if ($activeBatch) {
                 </div>
             </div>
         </div>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Тесты Слежения</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-crosshairs fa-3x text-purple mb-3"></i>
+                                        <h5 class="card-title">Аналоговое
+                                            слежение</h5>
+                                        <p class="card-text small">Оценка
+                                            способности удерживать курсор на
+                                            плавно движущейся цели.</p>
+                                        <a href="/tests/tracking/analog_tracking.php"
+                                           class="btn btn-primary">Пройти
+                                            тест</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-bullseye fa-3x text-orange mb-3"></i>
+                                        <h5 class="card-title">Слежение с
+                                            преследованием</h5>
+                                        <p class="card-text small">Оценка
+                                            способности преследовать и
+                                            "захватывать" движущуюся цель.</p>
+                                        <a href="/tests/tracking/pursuit_tracking.php"
+                                           class="btn btn-primary">Пройти
+                                            тест</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php if ($userRole === 'admin' || $userRole === 'expert'): ?>
             <div class="row mb-4">
                 <div class="col-md-12">

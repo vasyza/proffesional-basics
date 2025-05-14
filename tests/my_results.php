@@ -84,7 +84,9 @@ include '../includes/header.php';
                     'sound_arithmetic' => 'Звуковой сигнал и арифметика',
                     'visual_arithmetic' => 'Визуальная арифметика',
                     'moving_object_simple' => 'Простая реакция на движущийся объект',
-                    'moving_object_complex' => 'Сложная реакция на движущийся объект'
+                    'moving_object_complex' => 'Сложная реакция на движущийся объект',
+                    'analog_tracking' => 'Аналоговое слежение',
+                    'pursuit_tracking' => 'Слежение с преследованием'
                 ]; ?>
                 <?php foreach ($allowedTypes as $type): ?>
                     <option value="<?php echo $type; ?>" <?php echo $testType === $type ? 'selected' : ''; ?>>
