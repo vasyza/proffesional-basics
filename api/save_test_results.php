@@ -48,6 +48,20 @@ try {
         'moving_object_complex' => 'moving_object_complex_respondents',
     ];
 
+    if (key_exists($testType, $respondentTableMap) && !empty($username)) {
+        $stmt = $pdo->prepare("SELECT id FROM " . $respondentTableMap[$testType] . " WHERE user_name = ?");
+        $stmt->execute([$username]);
+
+        if ($stmt->rowCount() == 0) {
+            // Если пользователя нет, добавляем его
+            $insertStmt = $pdo->prepare("
+            INSERT INTO " . $respondentTableMap[$testType] . " (user_name, test_date) 
+            VALUES (?, NOW())
+        ");
+            $insertStmt->execute([$username]);
+        }
+    }
+
     // Создание записи о тестировании
     $stmt = $pdo->prepare("
         INSERT INTO test_sessions (user_id, test_type, average_time, accuracy, created_at)

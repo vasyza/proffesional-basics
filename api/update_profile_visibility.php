@@ -14,7 +14,7 @@ $isPublic = $input['is_public'] ?? false;
 
 try {
     $pdo = getDbConnection();
-    
+
     // Обновляем все записи пользователя в light_respondents
     $stmt = $pdo->prepare("UPDATE light_respondents SET isPublic = ? WHERE user_name = ?");
     $stmt->execute([$isPublic ? 1 : 0, $username]);
@@ -34,9 +34,16 @@ try {
     // Обновляем все записи пользователя в v_arith_respondents
     $stmt = $pdo->prepare("UPDATE v_arith_respondents SET isPublic = ? WHERE user_name = ?");
     $stmt->execute([$isPublic ? 1 : 0, $username]);
-    
+
+    $stmt = $pdo->prepare("UPDATE moving_object_simple_respondents SET isPublic = ? WHERE user_name = ?");
+    $stmt->execute([$isPublic ? 1 : 0, $username]);
+
+    $stmt = $pdo->prepare("UPDATE moving_object_complex_respondents SET isPublic = ? WHERE user_name = ?");
+    $stmt->execute([$isPublic ? 1 : 0, $username]);
+
+
     echo json_encode(['success' => true]);
-    
+
 } catch (PDOException $e) {
     echo json_encode([
         'success' => false,
