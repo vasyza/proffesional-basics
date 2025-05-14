@@ -72,35 +72,6 @@ try {
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label for="initialSpeed" class="form-label">Начальная
-                                    скорость (пикс/сек):</label>
-                                <input type="number" id="initialSpeed"
-                                       class="form-control" value="100" min="50"
-                                       max="500">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="accelerationValue"
-                                       class="form-label">Ускорение
-                                    (пикс/сек²):</label>
-                                <input type="number" id="accelerationValue"
-                                       class="form-control" value="10" min="0"
-                                       max="50">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="accelerationInterval"
-                                       class="form-label">Интервал ускорения
-                                    (сек):</label>
-                                <input type="number" id="accelerationInterval"
-                                       class="form-control" value="10" min="1">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="accelerationFrequency"
-                                       class="form-label">Частота ускорения
-                                    (каждый N-й интервал):</label>
-                                <input type="number" id="accelerationFrequency"
-                                       class="form-control" value="1" min="1">
-                            </div>
                         </div>
                         <div class="row g-3 mt-2">
                             <div class="col-md-auto">
@@ -261,10 +232,10 @@ try {
                 showTime: document.getElementById('showTime').checked,
                 showResultsPerMinute: document.getElementById('showResultsPerMinute').checked,
                 showOverallResults: document.getElementById('showOverallResults').checked,
-                initialSpeed: parseFloat(document.getElementById('initialSpeed').value),
-                accelerationValue: parseFloat(document.getElementById('accelerationValue').value),
-                accelerationInterval: parseInt(document.getElementById('accelerationInterval').value) * 1000, // в мс
-                accelerationFrequency: parseInt(document.getElementById('accelerationFrequency').value),
+                initialSpeed: 100,
+                accelerationValue: 10,
+                accelerationInterval: 10 * 1000, // в мс
+                accelerationFrequency: 1,
             };
             totalTestDuration = testSettings.duration;
         }

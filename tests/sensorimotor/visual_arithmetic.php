@@ -306,12 +306,12 @@ include_once '../../includes/header.php';
             oddButton.disabled = true;
 
             // Вычисление среднего времени реакции (только для корректных ответов)
-            const correctResults = results.filter(r => r.correct && r.time > 0);
+            const correctResults = results.filter(r => r.is_correct && r.reaction_time > 0);
             let totalTime = 0;
             let correctCount = correctResults.length;
 
             correctResults.forEach(result => {
-                totalTime += result.time;
+                totalTime += result.reaction_time;
             });
 
             averageTime.textContent = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
@@ -332,9 +332,9 @@ include_once '../../includes/header.php';
                 const timeCell = document.createElement('td');
                 const correctCell = document.createElement('td');
 
-                trialCell.textContent = result.trial;
+                trialCell.textContent = result.trial_number;
 
-                if (result.time < 0) {
+                if (result.reaction_time < 0) {
                     numbersCell.textContent = 'N/A';
                     sumCell.textContent = 'N/A';
                     timeCell.textContent = 'Преждевременная реакция';
@@ -343,10 +343,10 @@ include_once '../../includes/header.php';
                 } else {
                     numbersCell.textContent = `${result.number1} + ${result.number2}`;
                     sumCell.textContent = result.sum;
-                    timeCell.textContent = `${result.time} мс`;
-                    correctCell.textContent = result.correct ? 'Да' : 'Нет';
+                    timeCell.textContent = `${result.reaction_time} мс`;
+                    correctCell.textContent = result.is_correct ? 'Да' : 'Нет';
 
-                    if (!result.correct) {
+                    if (!result.is_correct) {
                         row.classList.add('table-warning');
                     }
                 }

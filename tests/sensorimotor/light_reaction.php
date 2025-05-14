@@ -260,8 +260,8 @@ include_once '../../includes/header.php';
             reactionButton.disabled = true;
 
             // Вычисление среднего времени реакции (исключая преждевременные)
-            const validResults = results.filter(r => r.time > 0);
-            const sum = validResults.reduce((acc, r) => acc + r.time, 0);
+            const validResults = results.filter(r => r.reaction_time > 0);
+            const sum = validResults.reduce((acc, r) => acc + r.reaction_time, 0);
             const avg = validResults.length > 0 ? Math.round(sum / validResults.length) : 0;
 
             // Отображение результатов
@@ -269,8 +269,8 @@ include_once '../../includes/header.php';
             results.forEach(r => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${r.trial}</td>
-                    <td>${r.time > 0 ? r.time + ' мс' : 'Преждевременная реакция'}</td>
+                    <td>${r.trial_number}</td>
+                    <td>${r.reaction_time > 0 ? r.reaction_time + ' мс' : 'Преждевременная реакция'}</td>
                 `;
                 resultsTable.appendChild(row);
             });
