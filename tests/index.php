@@ -44,8 +44,8 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC); // Явно указываем тип выборки
 
     // Проверяем наличие ключа в результате
-    if ($result && array_key_exists('isPublic', $result)) {
-        $isPublicProfile = (bool)$result['isPublic'];
+    if ($result && array_key_exists('ispublic', $result)) {
+        $isPublicProfile = (bool)$result['ispublic'];
     }
 } catch (PDOException $e) {
     error_log("Ошибка при получении настроек публичности: " . $e->getMessage());
