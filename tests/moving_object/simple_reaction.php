@@ -53,8 +53,6 @@ try {
                                 <label for="testDuration" class="form-label">Время
                                     выполнения (секунд):</label>
                                 <select id="testDuration" class="form-select">
-                                    <option value="10" selected>10 секунд
-                                    </option>
                                     <option value="120" selected>120 секунд (2
                                         минуты)
                                     </option>
