@@ -9,12 +9,12 @@ if (!isset($_SESSION['user_id'])) {
 
 try {
     $pdo = getDbConnection();
-    $stmt = $pdo->prepare("SELECT isPublic FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT ispublic FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $result = $stmt->fetch();
     
     if ($result) {
-        echo json_encode(['isPublic' => (bool)$result['isPublic']]);
+        echo json_encode(['isPublic' => (bool)$result['ispublic']]);
     } else {
         header('Ошибочка');
     }

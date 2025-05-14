@@ -34,6 +34,13 @@ if (($testType === 'moving_object_simple' || $testType === 'moving_object_comple
     }
 }
 
+if ($testType === 'analog_tracking' || $testType === 'pursuit_tracking') {
+    if ($accuracy === null) { // Для тестов слежения точность важнее среднего времени
+        echo json_encode(['success' => false, 'message' => "Недостаточно данных для $testType (accuracy не передана)"]);
+        exit;
+    }
+}
+
 try {
     $pdo = getDbConnection();
     $pdo->beginTransaction();
@@ -46,19 +53,35 @@ try {
         'visual_arithmetic' => 'v_arith_respondents',
         'moving_object_simple' => 'moving_object_simple_respondents',
         'moving_object_complex' => 'moving_object_complex_respondents',
+        'analog_tracking' => 'analog_tracking_respondents',
+        'pursuit_tracking' => 'pursuit_tracking_respondents'
     ];
 
     if (key_exists($testType, $respondentTableMap) && !empty($username)) {
-        $stmt = $pdo->prepare("SELECT id FROM " . $respondentTableMap[$testType] . " WHERE user_name = ?");
-        $stmt->execute([$username]);
+        $respondentTable = $respondentTableMap[$testType];
+        $stmtCheckRespondent = $pdo->prepare("SELECT id FROM " . $respondentTable . " WHERE user_name = ?");
+        $stmtCheckRespondent->execute([$username]);
 
-        if ($stmt->rowCount() == 0) {
-            // Если пользователя нет, добавляем его
+        if ($stmtCheckRespondent->rowCount() == 0) {
             $insertStmt = $pdo->prepare("
-            INSERT INTO " . $respondentTableMap[$testType] . " (user_name, test_date) 
-            VALUES (?, NOW())
-        ");
+                INSERT INTO " . $respondentTable . " (user_name, test_date)
+                SELECT ?, NOW() FROM users WHERE id = ? LIMIT 1
+            ");
+
+            $stmtUserPublic = $pdo->prepare("SELECT ispublic FROM users WHERE id = ?");
+            $stmtUserPublic->execute([$userId]);
+            $userPublicStatus = $stmtUserPublic->fetchColumn();
+            $isPublicForRespondent = $userPublicStatus;
+
+            $insertStmt = $pdo->prepare("
+                INSERT INTO " . $respondentTable . " (user_name, test_date)
+                VALUES (?, NOW())
+            ");
             $insertStmt->execute([$username]);
+        } else {
+             // Опционально: обновить test_date, если пользователь проходит тест повторно
+             $updateStmt = $pdo->prepare("UPDATE " . $respondentTable . " SET test_date = NOW() WHERE user_name = ?");
+             $updateStmt->execute([$username]);
         }
     }
 

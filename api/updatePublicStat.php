@@ -12,7 +12,7 @@ $isPublic = isset($data['isPublic']) ? (int)$data['isPublic'] : 0;
 
 try {
     $pdo = getDbConnection();
-    $stmt = $pdo->prepare("UPDATE users SET isPublic = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE users SET ispublic = ? WHERE id = ?");
     $stmt->execute([$isPublic, $_SESSION['user_id']]);
     
     echo json_encode(['success' => true]);

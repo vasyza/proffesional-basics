@@ -15,7 +15,15 @@ include_once '../../includes/header.php';
 $respondents = [];
 try {
     $pdo = getDbConnection();
-    $stmt = $pdo->query("SELECT user_name, test_date FROM moving_object_simple_respondents WHERE isPublic = TRUE ORDER BY test_date DESC LIMIT 20");
+
+    $stmt = $pdo->prepare("SELECT login FROM users WHERE ispublic = TRUE");
+    $stmt->execute();
+    $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    $placeholders = implode(', ', array_fill(0, count($users), '?'));
+
+    $stmt = $pdo->prepare("SELECT user_name, test_date FROM moving_object_simple_respondents WHERE user_name IN (" . $placeholders . ")  ORDER BY test_date DESC LIMIT 20");
+    $stmt->execute($users);
     $respondents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log("Ошибка при получении списка участников (simple_reaction): " . $e->getMessage());

@@ -39,8 +39,8 @@ $username = $_SESSION['user_name'] ?? '';
 $isPublicProfile = false;
 try {
     $pdo = getDbConnection();
-    $stmt = $pdo->prepare("SELECT isPublic FROM light_respondents WHERE user_name = ? ORDER BY test_date DESC LIMIT 1");
-    $stmt->execute([$username]);
+    $stmt = $pdo->prepare("SELECT ispublic FROM users WHERE id = ? LIMIT 1");
+    $stmt->execute([$userId]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC); // Явно указываем тип выборки
 
     // Проверяем наличие ключа в результате

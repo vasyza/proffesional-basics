@@ -15,32 +15,8 @@ $isPublic = $input['is_public'] ?? false;
 try {
     $pdo = getDbConnection();
 
-    // Обновляем все записи пользователя в light_respondents
-    $stmt = $pdo->prepare("UPDATE light_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
-    // Обновляем все записи пользователя в sound_respondents
-    $stmt = $pdo->prepare("UPDATE sound_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
-    // Обновляем все записи пользователя в color_respondents
-    $stmt = $pdo->prepare("UPDATE color_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
-    // Обновляем все записи пользователя в s_arith_respondents
-    $stmt = $pdo->prepare("UPDATE s_arith_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
-    // Обновляем все записи пользователя в v_arith_respondents
-    $stmt = $pdo->prepare("UPDATE v_arith_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
-    $stmt = $pdo->prepare("UPDATE moving_object_simple_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
-    $stmt = $pdo->prepare("UPDATE moving_object_complex_respondents SET isPublic = ? WHERE user_name = ?");
-    $stmt->execute([$isPublic ? 1 : 0, $username]);
-
+    $stmt = $pdo->prepare("UPDATE users SET ispublic = ? WHERE id = ?");
+    $stmt->execute([$isPublic ? 1 : 0, $_SESSION['user_id']]);
 
     echo json_encode(['success' => true]);
 

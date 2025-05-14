@@ -113,14 +113,15 @@ VALUES ('light_reaction', 'Реакция на свет'),
        ('visual_arithmetic', 'Визуальная арифметика'),
        ('sound_arithmetic', 'Звуковой сигнал и арифметика'),
        ('moving_object_simple', 'Простая реакция на движущийся объект'),
-       ('moving_object_complex', 'Сложная реакция на движущийся объект');
+       ('moving_object_complex', 'Сложная реакция на движущийся объект'),
+       ('analog_tracking', 'Аналоговое слежение'),
+       ('pursuit_tracking', 'Слежение с преследованием');
 
 CREATE TABLE IF NOT EXISTS light_respondents
 (
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -129,7 +130,6 @@ CREATE TABLE IF NOT EXISTS sound_respondents
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -138,7 +138,6 @@ CREATE TABLE IF NOT EXISTS color_respondents
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -147,7 +146,6 @@ CREATE TABLE IF NOT EXISTS s_arith_respondents
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
@@ -156,23 +154,38 @@ CREATE TABLE IF NOT EXISTS v_arith_respondents
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
-CREATE TABLE IF NOT EXISTS moving_object_simple_respondents (
+CREATE TABLE IF NOT EXISTS moving_object_simple_respondents
+(
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
     UNIQUE (user_name)
 );
 
-CREATE TABLE IF NOT EXISTS moving_object_complex_respondents (
+CREATE TABLE IF NOT EXISTS moving_object_complex_respondents
+(
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,
     test_date TIMESTAMP   NOT NULL,
-    isPublic  BOOLEAN DEFAULT FALSE,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS analog_tracking_respondents
+(
+    id        SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP   NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS pursuit_tracking_respondents
+(
+    id        SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP   NOT NULL,
     UNIQUE (user_name)
 );
 
