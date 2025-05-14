@@ -21,7 +21,10 @@ $testTypes = [
     'sound_reaction' => 'Реакция на звук',
     'color_reaction' => 'Реакция на разные цвета',
     'sound_arithmetic' => 'Звуковой сигнал и арифметика',
-    'visual_arithmetic' => 'Визуальная арифметика'
+    'visual_arithmetic' => 'Визуальная арифметика',
+    'moving_object_simple' => 'Простая реакция на движущийся объект',
+    'moving_object_complex' => 'Сложная реакция на движущийся объект'
+
 ];
 
 $pageTitle = "Выбор тестов для пользователя";
@@ -42,11 +45,18 @@ include '../includes/header.php';
                 </select>
             </div>
         </div>
-        <button type="button" id="add-test" class="btn btn-outline-secondary mb-3">Добавить тест</button>
-        <button type="button" id="remove-test" class="btn btn-outline-danger mb-3">Удалить последний тест</button>
-        <button type="submit" name="submit" class="btn btn-success">Выбрать</button>
+        <button type="button" id="add-test"
+                class="btn btn-outline-secondary mb-3">Добавить тест
+        </button>
+        <button type="button" id="remove-test"
+                class="btn btn-outline-danger mb-3">Удалить последний тест
+        </button>
+        <button type="submit" name="submit" class="btn btn-success">Выбрать
+        </button>
         <div id="copy-link-container" class="mt-3" style="display: none;">
-            <button type="button" id="copy-link" class="btn btn-primary">Скопировать ссылку-приглашение на прохождение тестов</button>
+            <button type="button" id="copy-link" class="btn btn-primary">
+                Скопировать ссылку-приглашение на прохождение тестов
+            </button>
         </div>
     </form>
 </div>
@@ -115,7 +125,9 @@ if (isset($_POST['submit'])) {
             </script>";
 
         } catch (PDOException $e) {
-            $pdo->rollBack();
+            if (isset($pdo)) {
+                $pdo->rollBack();
+            }
             echo "<div class='alert alert-danger'>Ошибка базы данных: " . htmlspecialchars($e->getMessage()) . "</div>";
         }
     }

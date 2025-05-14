@@ -30,44 +30,69 @@ include_once '../../includes/header.php';
         <div class="col-md-8 mx-auto">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Тест на сложную сенсомоторную реакцию: сложение в уме (звуковой сигнал)</h5>
+                    <h5 class="mb-0">Тест на сложную сенсомоторную реакцию:
+                        сложение в уме (звуковой сигнал)</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на <strong>звуковой арифметический стимул</strong>. Вы
-                        <strong>услышите</strong> два числа, которые нужно сложить в уме и определить, четная или нечетная
-                        получившаяся сумма. Тест рассчитан на аудиальное восприятие информации без визуальной подсказки.</p>
+                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на
+                        <strong>звуковой арифметический стимул</strong>. Вы
+                        <strong>услышите</strong> два числа, которые нужно
+                        сложить в уме и определить, четная или нечетная
+                        получившаяся сумма. Тест рассчитан на аудиальное
+                        восприятие информации без визуальной подсказки.</p>
 
                     <div class="alert alert-info">
                         <strong>Инструкция:</strong>
                         <ol>
-                            <li>Убедитесь, что звук на вашем устройстве включен</li>
+                            <li>Убедитесь, что звук на вашем устройстве
+                                включен
+                            </li>
                             <li>Нажмите кнопку "Начать тест"</li>
-                            <li>Вы <strong>услышите</strong> два числа, произнесенных голосом</li>
+                            <li>Вы <strong>услышите</strong> два числа,
+                                произнесенных голосом
+                            </li>
                             <li>Сложите эти числа в уме</li>
-                            <li>Если полученная сумма <strong>ЧЕТНАЯ</strong> - нажмите кнопку "Четное"</li>
-                            <li>Если полученная сумма <strong>НЕЧЕТНАЯ</strong> - нажмите кнопку "Нечетное"</li>
+                            <li>Если полученная сумма <strong>ЧЕТНАЯ</strong> -
+                                нажмите кнопку "Четное"
+                            </li>
+                            <li>Если полученная сумма <strong>НЕЧЕТНАЯ</strong>
+                                - нажмите кнопку "Нечетное"
+                            </li>
                             <li>Тест включает 10 попыток</li>
                         </ol>
                     </div>
 
                     <div class="text-center mb-4">
-                        <button id="startButton" class="btn btn-primary btn-lg">Начать тест</button>
+                        <button id="startButton" class="btn btn-primary btn-lg">
+                            Начать тест
+                        </button>
                     </div>
 
                     <div class="reaction-test-area mb-4">
-                        <div id="stimulusArea" class="stimulus-area d-flex align-items-center justify-content-center">
-                            <div id="numberDisplayWrapper" style="display: none;">
+                        <div id="stimulusArea"
+                             class="stimulus-area d-flex align-items-center justify-content-center">
+                            <div id="numberDisplayWrapper"
+                                 style="display: none;">
                                 <i class="fas fa-volume-up fa-3x text-primary mb-3"></i>
-                                <div id="audioInProgressText" class="audio-status">Слушайте внимательно...</div>
+                                <div id="audioInProgressText"
+                                     class="audio-status">Слушайте
+                                    внимательно...
+                                </div>
                             </div>
                         </div>
 
                         <div class="row g-2">
                             <div class="col-6">
-                                <button id="evenButton" class="btn btn-success btn-lg w-100" disabled>Четное</button>
+                                <button id="evenButton"
+                                        class="btn btn-success btn-lg w-100"
+                                        disabled>Четное
+                                </button>
                             </div>
                             <div class="col-6">
-                                <button id="oddButton" class="btn btn-danger btn-lg w-100" disabled>Нечетное</button>
+                                <button id="oddButton"
+                                        class="btn btn-danger btn-lg w-100"
+                                        disabled>Нечетное
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -78,13 +103,13 @@ include_once '../../includes/header.php';
                         <h5>Результаты:</h5>
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Попытка</th>
-                                    <th>Числа</th>
-                                    <th>Сумма</th>
-                                    <th>Время реакции (мс)</th>
-                                    <th>Правильно</th>
-                                </tr>
+                            <tr>
+                                <th>Попытка</th>
+                                <th>Числа</th>
+                                <th>Сумма</th>
+                                <th>Время реакции (мс)</th>
+                                <th>Правильно</th>
+                            </tr>
                             </thead>
                             <tbody id="resultsTable">
                             </tbody>
@@ -92,18 +117,24 @@ include_once '../../includes/header.php';
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="alert alert-success">
-                                    <strong>Среднее время реакции:</strong> <span id="averageTime">0</span> мс
+                                    <strong>Среднее время реакции:</strong>
+                                    <span id="averageTime">0</span> мс
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="alert alert-info">
-                                    <strong>Точность:</strong> <span id="accuracy">0</span>%
+                                    <strong>Точность:</strong> <span
+                                            id="accuracy">0</span>%
                                 </div>
                             </div>
                         </div>
                         <div class="d-grid gap-2">
-                            <button id="saveResultsButton" class="btn btn-success">Сохранить результаты</button>
-                            <a href="/tests/index.php" class="btn btn-outline-primary">Вернуться к списку тестов</a>
+                            <button id="saveResultsButton"
+                                    class="btn btn-success">Сохранить результаты
+                            </button>
+                            <a href="/tests/index.php"
+                               class="btn btn-outline-primary">Вернуться к
+                                списку тестов</a>
                         </div>
                     </div>
                 </div>
@@ -125,25 +156,27 @@ include_once '../../includes/header.php';
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Имя участника</th>
-                                        <th>Дата прохождения</th>
-                                    </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Имя участника</th>
+                                    <th>Дата прохождения</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($respondents as $index => $respondent): ?>
-                                        <tr>
-                                            <td><?= $index + 1 ?></td>
-                                            <td><?= htmlspecialchars($respondent['user_name']) ?></td>
-                                            <td><?= date('d.m.Y H:i', strtotime($respondent['test_date'])) ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
+                                <?php foreach ($respondents as $index => $respondent): ?>
+                                    <tr>
+                                        <td><?= $index + 1 ?></td>
+                                        <td><?= htmlspecialchars($respondent['user_name']) ?></td>
+                                        <td><?= date('d.m.Y H:i', strtotime($respondent['test_date'])) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
                     <?php else: ?>
-                        <div class="alert alert-warning">Пока никто не прошел этот тест. Будьте первым!</div>
+                        <div class="alert alert-warning">Пока никто не прошел
+                            этот тест. Будьте первым!
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -159,13 +192,6 @@ include_once '../../includes/header.php';
         border-radius: 8px;
         position: relative;
         margin-bottom: 15px;
-    }
-
-    .number-display {
-        font-size: 3rem;
-        font-weight: bold;
-        margin-top: 10px;
-        text-align: center;
     }
 
     .audio-status {
@@ -258,12 +284,12 @@ include_once '../../includes/header.php';
 
         function speakNumbers(number1, number2) {
             isSpeaking = true;
-            
+
             if ('responsiveVoice' in window) {
                 // Используем ResponsiveVoice, если доступен
-                responsiveVoice.speak(`${number1} плюс ${number2}`, "Russian Female", { 
+                responsiveVoice.speak(`${number1} плюс ${number2}`, "Russian Female", {
                     rate: 1,
-                    onend: function() {
+                    onend: function () {
                         isSpeaking = false;
                         audioInProgressText.textContent = "Оцените сумму!";
                         startTime = Date.now(); // Начинаем отсчет после завершения произношения
@@ -274,7 +300,7 @@ include_once '../../includes/header.php';
                 const utterance = new SpeechSynthesisUtterance(`${number1} плюс ${number2}`);
                 utterance.lang = 'ru-RU';
                 utterance.rate = 1;
-                utterance.onend = function() {
+                utterance.onend = function () {
                     isSpeaking = false;
                     audioInProgressText.textContent = "Оцените сумму!";
                     startTime = Date.now(); // Начинаем отсчет после завершения произношения
@@ -288,13 +314,13 @@ include_once '../../includes/header.php';
                 // Преждевременная реакция
                 clearTimeout(timeoutId);
                 results.push({
-                    trial: currentTrial + 1,
+                    trial_number: currentTrial + 1,
                     number1: null,
                     number2: null,
                     sum: null,
                     response: response,
-                    time: -1,
-                    correct: false
+                    reaction_time: -1,
+                    is_correct: false
                 });
 
                 currentTrial++;
@@ -311,13 +337,13 @@ include_once '../../includes/header.php';
                 const isCorrect = (response === 'even' && isEven) || (response === 'odd' && !isEven);
 
                 results.push({
-                    trial: currentTrial + 1,
+                    trial_number: currentTrial + 1,
                     number1: currentNumber1,
                     number2: currentNumber2,
                     sum: sum,
                     response: response,
-                    time: reactionTime,
-                    correct: isCorrect
+                    reaction_time: reactionTime,
+                    is_correct: isCorrect
                 });
 
                 currentTrial++;
@@ -340,15 +366,13 @@ include_once '../../includes/header.php';
                 totalTime += result.time;
             });
 
-            const avgTime = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
-            averageTime.textContent = avgTime;
+            averageTime.textContent = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
 
             // Вычисление точности (включая преждевременные реакции)
             // Делим количество правильных ответов на общее количество попыток
-            const accuracyValue = results.length > 0
+            accuracy.textContent = results.length > 0
                 ? ((correctResults.length / results.length) * 100).toFixed(1)
                 : "0";
-            accuracy.textContent = accuracyValue;
 
             // Заполнение таблицы результатов
             resultsTable.innerHTML = '';
@@ -391,43 +415,43 @@ include_once '../../includes/header.php';
         }
 
         function saveResults() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const batchId = urlParams.get('batch_id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const batchId = urlParams.get('batch_id');
 
-    const testData = {
-        test_type: 'sound_arithmetic',
-        results: results,
-        average_time: parseFloat(averageTime.textContent),
-        accuracy: parseFloat(accuracy.textContent)
-    };
+            const testData = {
+                test_type: 'sound_arithmetic',
+                results: results,
+                average_time: parseFloat(averageTime.textContent),
+                accuracy: parseFloat(accuracy.textContent)
+            };
 
-    fetch('/api/save_test_results.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(testData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Результаты успешно сохранены!');
-            
-            if (batchId) {
-                window.location.href = `/tests/test_batch.php?batch_id=${batchId}`;
-            } else {
-                window.location.href = '/tests/results.php';
-            }
+            fetch('/api/save_test_results.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Результаты успешно сохранены!');
 
-        } else {
-            alert('Ошибка при сохранении результатов: ' + data.message);
+                        if (batchId) {
+                            window.location.href = `/tests/test_batch.php?batch_id=${batchId}`;
+                        } else {
+                            window.location.href = '/tests/results.php';
+                        }
+
+                    } else {
+                        alert('Ошибка при сохранении результатов: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при сохранении результатов');
+                });
         }
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при сохранении результатов');
-    });
-}
     });
 </script>
 

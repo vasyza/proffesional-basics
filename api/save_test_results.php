@@ -24,94 +24,29 @@ if (!isset($input['test_type']) || !isset($input['results'])) {
 
 $testType = $input['test_type'];
 $results = $input['results'];
-$averageTime = isset($input['average_time']) ? $input['average_time'] : null;
-$accuracy = isset($input['accuracy']) ? $input['accuracy'] : null;
+$averageTime = $input['average_time'] ?? null;
+$accuracy = $input['accuracy'] ?? null;
+
+if (($testType === 'moving_object_simple' || $testType === 'moving_object_complex')) {
+    if ($averageTime === null || $accuracy === null) {
+        echo json_encode(['success' => false, 'message' => "Недостаточно данных для $testType (average_time или accuracy не переданы)"]);
+        exit;
+    }
+}
 
 try {
     $pdo = getDbConnection();
-
-    // Начало транзакции
     $pdo->beginTransaction();
 
-    // Добавление пользователя в таблицу light_respondents (если его там еще нет)
-    if ($testType === 'light_reaction' && !empty($username)) {
-        // Проверяем, есть ли уже пользователь в таблице
-        $stmt = $pdo->prepare("SELECT id FROM light_respondents WHERE user_name = ?");
-        $stmt->execute([$username]);
-
-        if ($stmt->rowCount() == 0) {
-            // Если пользователя нет, добавляем его
-            $insertStmt = $pdo->prepare("
-            INSERT INTO light_respondents (user_name, test_date) 
-            VALUES (?, NOW())
-        ");
-            $insertStmt->execute([$username]);
-        }
-    }
-
-// Добавление пользователя в таблицу sound_respondents (если его там еще нет)
-    if ($testType === 'sound_reaction' && !empty($username)) {
-        // Проверяем, есть ли уже пользователь в таблице
-        $stmt = $pdo->prepare("SELECT id FROM sound_respondents WHERE user_name = ?");
-        $stmt->execute([$username]);
-
-        if ($stmt->rowCount() == 0) {
-            // Если пользователя нет, добавляем его
-            $insertStmt = $pdo->prepare("
-            INSERT INTO sound_respondents (user_name, test_date) 
-            VALUES (?, NOW())
-        ");
-            $insertStmt->execute([$username]);
-        }
-    }
-
-// Добавление пользователя в таблицу color_respondents (если его там еще нет)
-    if ($testType === 'color_reaction' && !empty($username)) {
-        // Проверяем, есть ли уже пользователь в таблице
-        $stmt = $pdo->prepare("SELECT id FROM color_respondents WHERE user_name = ?");
-        $stmt->execute([$username]);
-
-        if ($stmt->rowCount() == 0) {
-            // Если пользователя нет, добавляем его
-            $insertStmt = $pdo->prepare("
-            INSERT INTO color_respondents (user_name, test_date) 
-            VALUES (?, NOW())
-        ");
-            $insertStmt->execute([$username]);
-        }
-    }
-
-// Добавление пользователя в таблицу s_arith_respondents (если его там еще нет)
-    if ($testType === 'sound_arithmetic' && !empty($username)) {
-        // Проверяем, есть ли уже пользователь в таблице
-        $stmt = $pdo->prepare("SELECT id FROM s_arith_respondents WHERE user_name = ?");
-        $stmt->execute([$username]);
-
-        if ($stmt->rowCount() == 0) {
-            // Если пользователя нет, добавляем его
-            $insertStmt = $pdo->prepare("
-            INSERT INTO s_arith_respondents (user_name, test_date) 
-            VALUES (?, NOW())
-        ");
-            $insertStmt->execute([$username]);
-        }
-    }
-
-// Добавление пользователя в таблицу v_arith_respondents (если его там еще нет)
-    if ($testType === 'visual_arithmetic' && !empty($username)) {
-        // Проверяем, есть ли уже пользователь в таблице
-        $stmt = $pdo->prepare("SELECT id FROM v_arith_respondents WHERE user_name = ?");
-        $stmt->execute([$username]);
-
-        if ($stmt->rowCount() == 0) {
-            // Если пользователя нет, добавляем его
-            $insertStmt = $pdo->prepare("
-            INSERT INTO v_arith_respondents (user_name, test_date) 
-            VALUES (?, NOW())
-        ");
-            $insertStmt->execute([$username]);
-        }
-    }
+    $respondentTableMap = [
+        'light_reaction' => 'light_respondents',
+        'sound_reaction' => 'sound_respondents',
+        'color_reaction' => 'color_respondents',
+        'sound_arithmetic' => 's_arith_respondents',
+        'visual_arithmetic' => 'v_arith_respondents',
+        'moving_object_simple' => 'moving_object_simple_respondents',
+        'moving_object_complex' => 'moving_object_complex_respondents',
+    ];
 
     // Создание записи о тестировании
     $stmt = $pdo->prepare("
@@ -128,7 +63,7 @@ try {
     ");
 
     foreach ($results as $result) {
-        $trialNumber = $result['trial'];
+        $trialNumber = $result['trial_number'];
 
         // Значение стимула (число, цвет и т.д.)
         $stimulusValue = null;
@@ -136,85 +71,100 @@ try {
             $stimulusValue = $result['number'];
         } elseif (isset($result['color'])) {
             $stimulusValue = $result['color'];
+        } elseif (isset($result['stimulus_value'])) {
+            $stimulusValue = $result['stimulus_value'];
         }
 
-        // Значение ответа
-        $responseValue = isset($result['response']) ? $result['response'] : null;
-
-        // Время реакции
-        $reactionTime = $result['time'];
-
-        // Правильность ответа
-        $isCorrect = isset($result['correct']) ? ($result['correct'] ? 1 : 0) : null;
+        $responseValue = $result['response'] ?? null;
+        $reactionTime = $result['reaction_time'];
+        $isCorrect = isset($result['is_correct']) ? ($result['is_correct'] ? 1 : 0) : null;
+        if ($trialNumber === null || $reactionTime === null || $isCorrect === null) {
+            continue;
+        }
 
         $stmt->execute([$sessionId, $trialNumber, $stimulusValue, $responseValue, $reactionTime, $isCorrect]);
     }
 
-    // Нормирование результатов
     $normalizedResult = null;
     if ($averageTime !== null) {
-        // Получаем статистику по группе для данного теста
-        $stmt = $pdo->prepare("
+        $stmtNorm = $pdo->prepare("
             SELECT 
                 AVG(average_time) as group_avg_time,
                 STDDEV(average_time) as group_std_time
             FROM test_sessions
-            WHERE test_type = ?
+            WHERE test_type = ? AND average_time IS NOT NULL
         ");
-        $stmt->execute([$testType]);
-        $groupStats = $stmt->fetch();
+        $stmtNorm->execute([$testType]);
+        $groupStats = $stmtNorm->fetch();
 
-        if ($groupStats && $groupStats['group_avg_time'] !== null && $groupStats['group_std_time'] !== null) {
-            $groupAvg = $groupStats['group_avg_time'];
-            $groupStd = $groupStats['group_std_time'];
+        if ($groupStats && $groupStats['group_avg_time'] !== null && $groupStats['group_std_time'] !== null && $groupStats['group_std_time'] > 0) {
+            $groupAvg = (float)$groupStats['group_avg_time'];
+            $groupStd = (float)$groupStats['group_std_time'];
 
-            // Определяем уровень результата пользователя
             if ($averageTime >= $groupAvg + $groupStd) {
-                $normalizedResult = 1; // Худшие показатели
+                $normalizedResult = 1;
             } elseif ($averageTime <= $groupAvg - $groupStd) {
-                $normalizedResult = 3; // Лучшие показатели
+                $normalizedResult = 3;
             } else {
-                $normalizedResult = 2; // Средние показатели
+                $normalizedResult = 2;
             }
+        } elseif ($groupStats && $groupStats['group_avg_time'] !== null && ($groupStats['group_std_time'] == 0)) {
+            // Если стандартное отклонение 0 или null (мало данных или все одинаковые),
+            // можно установить средний результат или специфическое значение.
+            $normalizedResult = 2;
         }
     }
 
-    // Обновляем запись теста с нормированным результатом
     if ($normalizedResult !== null) {
-        $stmt = $pdo->prepare("
+        $stmtUpdateNorm = $pdo->prepare("
             UPDATE test_sessions 
             SET normalized_result = ? 
             WHERE id = ?
         ");
-        $stmt->execute([$normalizedResult, $sessionId]);
+        $stmtUpdateNorm->execute([$normalizedResult, $sessionId]);
     }
 
-    // 4. Обновление записи о приглашении на тест, если тест был запущен по приглашению
+    // Обновление записи о приглашении на тест (эта логика остается)
+    if (!empty($input['batch_id'])) {
+        $_SESSION['invitation_id'] = $input['batch_id']; // Используем batch_id как invitation_id
+    }
+
     if (isset($_SESSION['invitation_id'])) {
         $invitationId = $_SESSION['invitation_id'];
-        $stmt = $pdo->prepare("
-            INSERT INTO invitation_tests (invitation_id, test_session_id)
-            VALUES (?, ?)
-        ");
-        $stmt->execute([$invitationId, $sessionId]);
+        // invitation_id действительно существует в test_batches как id
+        $checkBatchStmt = $pdo->prepare("SELECT id FROM test_batches WHERE id = ?");
+        $checkBatchStmt->execute([$invitationId]);
+        if ($checkBatchStmt->fetch()) {
+            $stmtInvite = $pdo->prepare("
+                INSERT INTO invitation_tests (invitation_id, test_session_id)
+                VALUES (?, ?)
+                ON CONFLICT (invitation_id, test_session_id) DO NOTHING
+            ");
+            $stmtInvite->execute([$invitationId, $sessionId]);
 
-        // Проверка, все ли тесты из приглашения выполнены
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) as completed_count, 
-                   (SELECT COUNT(*) FROM invitation_test_types WHERE invitation_id = ?) as total_count
-            FROM invitation_tests it
-            JOIN test_sessions ts ON it.test_session_id = ts.id
-            WHERE it.invitation_id = ?
-        ");
-        $stmt->execute([$invitationId, $invitationId]);
-        $testCounts = $stmt->fetch();
+            $stmtCountTests = $pdo->prepare("
+                SELECT COUNT(DISTINCT itt.test_type) as total_count
+                FROM invitation_test_types itt
+                WHERE itt.invitation_id = ?
+            ");
+            $stmtCountTests->execute([$invitationId]);
+            $totalTestsInBatch = $stmtCountTests->fetchColumn();
 
-        // Если все тесты выполнены, помечаем приглашение как завершенное
-        if ($testCounts['completed_count'] >= $testCounts['total_count']) {
-            $stmt = $pdo->prepare("UPDATE test_invitations SET is_completed = 1 WHERE id = ?");
-            $stmt->execute([$invitationId]);
+            $stmtCompletedTests = $pdo->prepare("
+                SELECT COUNT(DISTINCT ts.test_type) as completed_count
+                FROM invitation_tests it
+                JOIN test_sessions ts ON it.test_session_id = ts.id
+                WHERE it.invitation_id = ?
+            ");
+            $stmtCompletedTests->execute([$invitationId]);
+            $completedTestsInBatch = $stmtCompletedTests->fetchColumn();
 
-            // Очищаем сессию от ID приглашения
+            if ($completedTestsInBatch >= $totalTestsInBatch) {
+                $stmtUpdateInvitation = $pdo->prepare("UPDATE test_batches SET isFinished = TRUE WHERE id = ?");
+                $stmtUpdateInvitation->execute([$invitationId]);
+                unset($_SESSION['invitation_id']);
+            }
+        } else {
             unset($_SESSION['invitation_id']);
         }
     }
@@ -226,17 +176,22 @@ try {
         'success' => true,
         'session_id' => $sessionId,
         'normalized_result' => $normalizedResult,
-        'group_stats' => isset($groupStats) ? $groupStats : null
+        'group_stats' => $groupStats ?? null
     ]);
-
 } catch (PDOException $e) {
-    // Откат транзакции в случае ошибки
-    if ($pdo->inTransaction()) {
+    if (isset($pdo) && $pdo->inTransaction()) {
         $pdo->rollBack();
     }
-
     echo json_encode([
         'success' => false,
         'message' => 'Ошибка базы данных: ' . $e->getMessage()
+    ]);
+} catch (Exception $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    echo json_encode([
+        'success' => false,
+        'message' => 'Произошла ошибка: ' . $e->getMessage()
     ]);
 }

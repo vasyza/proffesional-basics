@@ -30,45 +30,68 @@ include_once '../../includes/header.php';
         <div class="col-md-8 mx-auto">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Тест на сложную сенсомоторную реакцию на разные цвета</h5>
+                    <h5 class="mb-0">Тест на сложную сенсомоторную реакцию на
+                        разные цвета</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на разные цвета. В зависимости от цвета
+                    <p class="mb-4">Этот тест измеряет скорость вашей реакции на
+                        разные цвета. В зависимости от цвета
                         круга, вам нужно нажать соответствующую кнопку:</p>
 
                     <div class="alert alert-info">
                         <strong>Инструкция:</strong>
                         <ol>
                             <li>Нажмите кнопку "Начать тест"</li>
-                            <li>На экране будут появляться круги разных цветов</li>
-                            <li>Если появится <span class="text-danger fw-bold">КРАСНЫЙ</span> круг - нажмите кнопку
-                                "Красный"</li>
-                            <li>Если появится <span class="text-success fw-bold">ЗЕЛЕНЫЙ</span> круг - нажмите кнопку
-                                "Зеленый"</li>
-                            <li>Если появится <span class="text-primary fw-bold">СИНИЙ</span> круг - нажмите кнопку
-                                "Синий"</li>
+                            <li>На экране будут появляться круги разных цветов
+                            </li>
+                            <li>Если появится <span class="text-danger fw-bold">КРАСНЫЙ</span>
+                                круг - нажмите кнопку
+                                "Красный"
+                            </li>
+                            <li>Если появится <span
+                                        class="text-success fw-bold">ЗЕЛЕНЫЙ</span>
+                                круг - нажмите кнопку
+                                "Зеленый"
+                            </li>
+                            <li>Если появится <span
+                                        class="text-primary fw-bold">СИНИЙ</span>
+                                круг - нажмите кнопку
+                                "Синий"
+                            </li>
                             <li>Тест включает 15 попыток</li>
                         </ol>
                     </div>
 
                     <div class="text-center mb-4">
-                        <button id="startButton" class="btn btn-primary btn-lg">Начать тест</button>
+                        <button id="startButton" class="btn btn-primary btn-lg">
+                            Начать тест
+                        </button>
                     </div>
 
                     <div class="reaction-test-area mb-4">
                         <div id="stimulusArea" class="stimulus-area">
-                            <div id="colorStimulus" class="color-stimulus"></div>
+                            <div id="colorStimulus"
+                                 class="color-stimulus"></div>
                         </div>
 
                         <div class="row g-2 mb-3">
                             <div class="col-4">
-                                <button id="redButton" class="btn btn-danger btn-lg w-100" disabled>Красный</button>
+                                <button id="redButton"
+                                        class="btn btn-danger btn-lg w-100"
+                                        disabled>Красный
+                                </button>
                             </div>
                             <div class="col-4">
-                                <button id="greenButton" class="btn btn-success btn-lg w-100" disabled>Зеленый</button>
+                                <button id="greenButton"
+                                        class="btn btn-success btn-lg w-100"
+                                        disabled>Зеленый
+                                </button>
                             </div>
                             <div class="col-4">
-                                <button id="blueButton" class="btn btn-primary btn-lg w-100" disabled>Синий</button>
+                                <button id="blueButton"
+                                        class="btn btn-primary btn-lg w-100"
+                                        disabled>Синий
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -79,12 +102,12 @@ include_once '../../includes/header.php';
                         <h5>Результаты:</h5>
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Попытка</th>
-                                    <th>Цвет</th>
-                                    <th>Время реакции (мс)</th>
-                                    <th>Правильно</th>
-                                </tr>
+                            <tr>
+                                <th>Попытка</th>
+                                <th>Цвет</th>
+                                <th>Время реакции (мс)</th>
+                                <th>Правильно</th>
+                            </tr>
                             </thead>
                             <tbody id="resultsTable">
                             </tbody>
@@ -92,18 +115,24 @@ include_once '../../includes/header.php';
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="alert alert-success">
-                                    <strong>Среднее время реакции:</strong> <span id="averageTime">0</span> мс
+                                    <strong>Среднее время реакции:</strong>
+                                    <span id="averageTime">0</span> мс
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="alert alert-info">
-                                    <strong>Точность:</strong> <span id="accuracy">0</span>%
+                                    <strong>Точность:</strong> <span
+                                            id="accuracy">0</span>%
                                 </div>
                             </div>
                         </div>
                         <div class="d-grid gap-2">
-                            <button id="saveResultsButton" class="btn btn-success">Сохранить результаты</button>
-                            <a href="/tests/index.php" class="btn btn-outline-primary">Вернуться к списку тестов</a>
+                            <button id="saveResultsButton"
+                                    class="btn btn-success">Сохранить результаты
+                            </button>
+                            <a href="/tests/index.php"
+                               class="btn btn-outline-primary">Вернуться к
+                                списку тестов</a>
                         </div>
                     </div>
                 </div>
@@ -125,25 +154,27 @@ include_once '../../includes/header.php';
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Имя участника</th>
-                                        <th>Дата прохождения</th>
-                                    </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Имя участника</th>
+                                    <th>Дата прохождения</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($respondents as $index => $respondent): ?>
-                                        <tr>
-                                            <td><?= $index + 1 ?></td>
-                                            <td><?= htmlspecialchars($respondent['user_name']) ?></td>
-                                            <td><?= date('d.m.Y H:i', strtotime($respondent['test_date'])) ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
+                                <?php foreach ($respondents as $index => $respondent): ?>
+                                    <tr>
+                                        <td><?= $index + 1 ?></td>
+                                        <td><?= htmlspecialchars($respondent['user_name']) ?></td>
+                                        <td><?= date('d.m.Y H:i', strtotime($respondent['test_date'])) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
                     <?php else: ?>
-                        <div class="alert alert-warning">Пока никто не прошел этот тест. Будьте первым!</div>
+                        <div class="alert alert-warning">Пока никто не прошел
+                            этот тест. Будьте первым!
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -187,9 +218,9 @@ include_once '../../includes/header.php';
         const saveResultsButton = document.getElementById('saveResultsButton');
 
         const colors = [
-            { name: 'red', hex: '#ff0000', button: redButton },
-            { name: 'green', hex: '#00aa00', button: greenButton },
-            { name: 'blue', hex: '#0000ff', button: blueButton }
+            {name: 'red', hex: '#ff0000', button: redButton},
+            {name: 'green', hex: '#00aa00', button: greenButton},
+            {name: 'blue', hex: '#0000ff', button: blueButton}
         ];
 
         let currentTrial = 0;
@@ -251,10 +282,10 @@ include_once '../../includes/header.php';
                 // Преждевременная реакция
                 clearTimeout(timeoutId);
                 results.push({
-                    trial: currentTrial + 1,
+                    trial_number: currentTrial + 1,
                     color: null,
-                    time: -1,
-                    isCorrect: false
+                    reaction_time: -1,
+                    is_correct: false
                 });
 
                 currentTrial++;
@@ -267,10 +298,10 @@ include_once '../../includes/header.php';
                 const isCorrect = color === currentColor.name;
 
                 results.push({
-                    trial: currentTrial + 1,
+                    trial_number: currentTrial + 1,
                     color: currentColor.name,
-                    time: reactionTime,
-                    isCorrect: isCorrect
+                    reaction_time: reactionTime,
+                    is_correct: isCorrect
                 });
 
                 currentTrial++;
@@ -294,15 +325,13 @@ include_once '../../includes/header.php';
                 totalTime += result.time;
             });
 
-            const avgTime = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
-            averageTime.textContent = avgTime;
+            averageTime.textContent = correctCount > 0 ? (totalTime / correctCount).toFixed(1) : "N/A";
 
             // Вычисление точности (включая преждевременные реакции)
             // Делим количество правильных ответов на общее количество попыток
-            const accuracyValue = results.length > 0
+            accuracy.textContent = results.length > 0
                 ? ((correctResults.length / results.length) * 100).toFixed(1)
                 : "0";
-            accuracy.textContent = accuracyValue;
 
             // Заполнение таблицы результатов
             resultsTable.innerHTML = '';
@@ -332,62 +361,44 @@ include_once '../../includes/header.php';
             resultsContainer.style.display = 'block';
         }
 
-        function getColorName(color) {
-            switch (color) {
-                case 'red': return 'Красный';
-                case 'green': return 'Зеленый';
-                case 'blue': return 'Синий';
-                default: return color;
-            }
-        }
-
-        function getColorHex(color) {
-            switch (color) {
-                case 'red': return '#ff0000';
-                case 'green': return '#00aa00';
-                case 'blue': return '#0000ff';
-                default: return '#000000';
-            }
-        }
-
         function saveResults() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const batchId = urlParams.get('batch_id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const batchId = urlParams.get('batch_id');
 
-    const testData = {
-        test_type: 'color_reaction',
-        results: results,
-        average_time: parseFloat(averageTime.textContent),
-        accuracy: parseFloat(accuracy.textContent)
-    };
+            const testData = {
+                test_type: 'color_reaction',
+                results: results,
+                average_time: parseFloat(averageTime.textContent),
+                accuracy: parseFloat(accuracy.textContent)
+            };
 
-    fetch('/api/save_test_results.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(testData)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Результаты успешно сохранены!');
-                
-                if (batchId) {
-                    window.location.href = `/tests/test_batch.php?batch_id=${batchId}`;
-                } else {
-                    window.location.href = '/tests/results.php';
-                }
+            fetch('/api/save_test_results.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Результаты успешно сохранены!');
 
-            } else {
-                alert('Ошибка при сохранении результатов: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при сохранении результатов');
-        });
-}
+                        if (batchId) {
+                            window.location.href = `/tests/test_batch.php?batch_id=${batchId}`;
+                        } else {
+                            window.location.href = '/tests/results.php';
+                        }
+
+                    } else {
+                        alert('Ошибка при сохранении результатов: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при сохранении результатов');
+                });
+        }
     });
 </script>
 

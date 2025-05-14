@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id']; // Получаем ID текущего пользователя
 
 // Обработка фильтра
-$allowedTypes = ['light_reaction', 'sound_reaction', 'color_reaction', 'visual_arithmetic', 'sound_arithmetic'];
+$allowedTypes = ['light_reaction', 'sound_reaction', 'color_reaction', 'visual_arithmetic', 'sound_arithmetic', 'moving_object_simple', 'moving_object_complex'];
 $testType = isset($_GET['type']) && in_array($_GET['type'], $allowedTypes) ? $_GET['type'] : '';
 
 // Получение данных
@@ -46,7 +46,7 @@ try {
             SELECT created_at, average_time, accuracy 
             FROM test_sessions 
             WHERE user_id = :user_id AND test_type = :type
-            ORDER BY created_at ASC
+            ORDER BY created_at
         ";
         $graphStmt = $pdo->prepare($graphQuery);
         $graphStmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
@@ -74,14 +74,17 @@ include '../includes/header.php';
     <form class="mb-3" method="get">
         <label for="type" class="form-label">Фильтр по типу теста:</label>
         <div class="input-group">
-            <select name="type" id="type" class="form-select" onchange="this.form.submit()">
+            <select name="type" id="type" class="form-select"
+                    onchange="this.form.submit()">
                 <option value="">Все типы</option>
                 <?php $typeLabels = [
                     'light_reaction' => 'Реакция на свет',
                     'sound_reaction' => 'Реакция на звук',
                     'color_reaction' => 'Реакция на разные цвета',
                     'sound_arithmetic' => 'Звуковой сигнал и арифметика',
-                    'visual_arithmetic' => 'Визуальная арифметика'
+                    'visual_arithmetic' => 'Визуальная арифметика',
+                    'moving_object_simple' => 'Простая реакция на движущийся объект',
+                    'moving_object_complex' => 'Сложная реакция на движущийся объект'
                 ]; ?>
                 <?php foreach ($allowedTypes as $type): ?>
                     <option value="<?php echo $type; ?>" <?php echo $testType === $type ? 'selected' : ''; ?>>
@@ -118,24 +121,24 @@ include '../includes/header.php';
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Тип теста</th>
-                                <th>Среднее время</th>
-                                <th>Точность</th>
-                                <th>Дата</th>
-                            </tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Тип теста</th>
+                            <th>Среднее время</th>
+                            <th>Точность</th>
+                            <th>Дата</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($results as $index => $row): ?>
-                                <tr>
-                                    <td><?php echo $index + 1; ?></td>
-                                    <td><?php echo $typeLabels[$row['test_type']] ?? $row['test_type']; ?></td>
-                                    <td><?php echo $row['average_time'] !== null ? round($row['average_time'], 2) . ' сек' : '—'; ?></td>
-                                    <td><?php echo $row['accuracy'] !== null ? round($row['accuracy'], 1) . '%' : '—'; ?></td>
-                                    <td><?php echo date('d.m.Y H:i', strtotime($row['created_at'])); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
+                        <?php foreach ($results as $index => $row): ?>
+                            <tr>
+                                <td><?php echo $index + 1; ?></td>
+                                <td><?php echo $typeLabels[$row['test_type']] ?? $row['test_type']; ?></td>
+                                <td><?php echo $row['average_time'] !== null ? round($row['average_time'], 2) . ' сек' : '—'; ?></td>
+                                <td><?php echo $row['accuracy'] !== null ? round($row['accuracy'], 1) . '%' : '—'; ?></td>
+                                <td><?php echo date('d.m.Y H:i', strtotime($row['created_at'])); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
