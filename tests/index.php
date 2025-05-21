@@ -354,6 +354,66 @@ if ($activeBatch) {
                 </div>
             </div>
         </div>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Тесты познавательных способностей
+                            (Внимание, Память, Мышление)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-border-all fa-3x text-primary mb-3"></i>
+                                        <h5 class="card-title">Внимание: Таблицы
+                                            Шульте</h5>
+                                        <p class="card-text small">Оценка объема
+                                            и устойчивости внимания путем поиска
+                                            чисел в таблице.</p>
+                                        <a href="/tests/cognitive/schulte_table.php"
+                                           class="btn btn-primary">Пройти
+                                            тест</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-brain fa-3x text-success mb-3"></i>
+                                        <h5 class="card-title">Память:
+                                            Запоминание чисел</h5>
+                                        <p class="card-text small">Тест на
+                                            кратковременную зрительную память на
+                                            числа.</p>
+                                        <a href="/tests/cognitive/number_memorization.php"
+                                           class="btn btn-primary">Пройти
+                                            тест</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-lightbulb fa-3x text-info mb-3"></i>
+                                        <h5 class="card-title">Мышление:
+                                            Аналогии</h5>
+                                        <p class="card-text small">Оценка
+                                            способности к установлению
+                                            логических связей между
+                                            понятиями.</p>
+                                        <a href="/tests/cognitive/analogies_test.php"
+                                           class="btn btn-primary">Пройти
+                                            тест</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php if ($userRole === 'admin' || $userRole === 'expert'): ?>
             <div class="row mb-4">
                 <div class="col-md-12">

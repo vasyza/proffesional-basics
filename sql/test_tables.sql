@@ -115,7 +115,10 @@ VALUES ('light_reaction', 'Реакция на свет'),
        ('moving_object_simple', 'Простая реакция на движущийся объект'),
        ('moving_object_complex', 'Сложная реакция на движущийся объект'),
        ('analog_tracking', 'Аналоговое слежение'),
-       ('pursuit_tracking', 'Слежение с преследованием');
+       ('pursuit_tracking', 'Слежение с преследованием'),
+       ('schulte_table', 'Тест внимания: Таблицы Шульте'),
+('number_memorization', 'Тест памяти: Запоминание чисел'),
+('analogies_test', 'Тест мышления: Аналогии');;
 
 CREATE TABLE IF NOT EXISTS light_respondents
 (
@@ -182,6 +185,30 @@ CREATE TABLE IF NOT EXISTS analog_tracking_respondents
 );
 
 CREATE TABLE IF NOT EXISTS pursuit_tracking_respondents
+(
+    id        SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP   NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS schulte_table_respondents
+(
+    id        SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP   NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS number_memorization_respondents
+(
+    id        SERIAL PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL,
+    test_date TIMESTAMP   NOT NULL,
+    UNIQUE (user_name)
+);
+
+CREATE TABLE IF NOT EXISTS analogies_test_respondents
 (
     id        SERIAL PRIMARY KEY,
     user_name VARCHAR(50) NOT NULL,

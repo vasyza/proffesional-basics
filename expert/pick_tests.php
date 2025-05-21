@@ -25,7 +25,10 @@ $testTypes = [
     'moving_object_simple' => 'Простая реакция на движущийся объект',
     'moving_object_complex' => 'Сложная реакция на движущийся объект',
     'analog_tracking' => 'Аналоговое слежение',
-    'pursuit_tracking' => 'Слежение с преследованием'
+    'pursuit_tracking' => 'Слежение с преследованием',
+    'schulte_table' => 'Тест внимания: Таблицы Шульте',
+    'number_memorization' => 'Тест памяти: Запоминание чисел',
+    'analogies_test' => 'Тест мышления: Аналогии'
 ];
 
 $pageTitle = "Выбор тестов для пользователя";

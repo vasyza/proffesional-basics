@@ -68,7 +68,7 @@ if (!isset($_GET['user_id'])) {
 
 // Иначе — пользователь выбран, показываем его результаты
 $userId = (int)$_GET['user_id'];
-$allowedTypes = ['light_reaction', 'sound_reaction', 'color_reaction', 'visual_arithmetic', 'sound_arithmetic', 'moving_object_simple', 'moving_object_complex'];
+$allowedTypes = ['light_reaction', 'sound_reaction', 'color_reaction', 'visual_arithmetic', 'sound_arithmetic', 'moving_object_simple', 'moving_object_complex', 'analog_tracking', 'pursuit_tracking', 'schulte_table', 'number_memorization', 'analogies_test'];
 $testType = isset($_GET['type']) && in_array($_GET['type'], $allowedTypes) ? $_GET['type'] : '';
 
 // Получаем имя выбранного пользователя (для заголовка и ссылки «назад»)
@@ -141,7 +141,10 @@ include '../includes/header.php';
                         'moving_object_simple' => 'Простая реакция на движущийся объект',
                         'moving_object_complex' => 'Сложная реакция на движущийся объект',
                         'analog_tracking' => 'Аналоговое слежение',
-                        'pursuit_tracking' => 'Слежение с преследованием'
+                        'pursuit_tracking' => 'Слежение с преследованием',
+                        'schulte_table' => 'Тест внимания: Таблицы Шульте',
+                        'number_memorization' => 'Тест памяти: Запоминание чисел',
+                        'analogies_test' => 'Тест мышления: Аналогии'
                     ];
                     foreach ($allowedTypes as $type): ?>
                         <option value="<?php echo $type; ?>" <?php if ($testType === $type) echo 'selected'; ?>>

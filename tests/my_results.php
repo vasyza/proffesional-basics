@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id']; // Получаем ID текущего пользователя
 
 // Обработка фильтра
-$allowedTypes = ['light_reaction', 'sound_reaction', 'color_reaction', 'visual_arithmetic', 'sound_arithmetic', 'moving_object_simple', 'moving_object_complex'];
+$allowedTypes = ['light_reaction', 'sound_reaction', 'color_reaction', 'visual_arithmetic', 'sound_arithmetic', 'moving_object_simple', 'moving_object_complex', 'analog_tracking', 'pursuit_tracking', 'schulte_table', 'number_memorization', 'analogies_test'];
 $testType = isset($_GET['type']) && in_array($_GET['type'], $allowedTypes) ? $_GET['type'] : '';
 
 // Получение данных
@@ -86,7 +86,10 @@ include '../includes/header.php';
                     'moving_object_simple' => 'Простая реакция на движущийся объект',
                     'moving_object_complex' => 'Сложная реакция на движущийся объект',
                     'analog_tracking' => 'Аналоговое слежение',
-                    'pursuit_tracking' => 'Слежение с преследованием'
+                    'pursuit_tracking' => 'Слежение с преследованием',
+                    'schulte_table' => 'Тест внимания: Таблицы Шульте',
+                    'number_memorization' => 'Тест памяти: Запоминание чисел',
+                    'analogies_test' => 'Тест мышления: Аналогии'
                 ]; ?>
                 <?php foreach ($allowedTypes as $type): ?>
                     <option value="<?php echo $type; ?>" <?php echo $testType === $type ? 'selected' : ''; ?>>
@@ -136,7 +139,29 @@ include '../includes/header.php';
                             <tr>
                                 <td><?php echo $index + 1; ?></td>
                                 <td><?php echo $typeLabels[$row['test_type']] ?? $row['test_type']; ?></td>
-                                <td><?php echo $row['average_time'] !== null ? round($row['average_time'], 2) . ' сек' : '—'; ?></td>
+                                <td>
+                                    <?php
+                                    // Check if average_time is not null
+                                    if ($row['average_time'] !== null) {
+                                        // For specific cognitive tests, assume time is in ms and convert to seconds
+                                        if (in_array($row['test_type'], ['schulte_table', 'analogies_test', 'number_memorization'])) {
+                                            // For number_memorization, average_time might be max length, not time.
+                                            // Let's assume for schulte and analogies it's time in ms.
+                                            // For number_memorization, 'average_time' stores max_correct_length, so no 'сек' unit.
+                                            if ($row['test_type'] === 'number_memorization') {
+                                                 echo round($row['average_time'], 0) . ' (макс. длина)';
+                                            } else {
+                                                 echo round($row['average_time'] / 1000, 2) . ' сек';
+                                            }
+                                        } else {
+                                            // For other tests, assume it's already in seconds or a different unit
+                                            echo round($row['average_time'], 2) . ' сек';
+                                        }
+                                    } else {
+                                        echo '—'; // Display dash if average_time is null
+                                    }
+                                    ?>
+                                </td>
                                 <td><?php echo $row['accuracy'] !== null ? round($row['accuracy'], 1) . '%' : '—'; ?></td>
                                 <td><?php echo date('d.m.Y H:i', strtotime($row['created_at'])); ?></td>
                             </tr>
@@ -154,39 +179,99 @@ include '../includes/header.php';
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const graphData = <?php echo json_encode($graphData); ?>;
-    const labels = graphData.map(item => item.created_at);
+    const currentTestType = '<?php echo $testType; ?>';
+    let labels = [];
+    let timeData = [];
+    let accuracyData = [];
 
-    const timeData = graphData.map(item => item.average_time);
-    const accuracyData = graphData.map(item => item.accuracy);
+    if (graphData.length > 0) {
+        labels = graphData.map(item => new Date(item.created_at).toLocaleString('ru-RU'));
 
-    new Chart(document.getElementById('timeChart'), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Среднее время (сек)',
-                data: timeData,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
+        if (currentTestType === 'schulte_table' || currentTestType === 'analogies_test') {
+            timeData = graphData.map(item => item.average_time !== null ? (item.average_time / 1000).toFixed(2) : null);
+        } else if (currentTestType === 'number_memorization') {
+            timeData = graphData.map(item => item.average_time);
         }
-    });
+        else {
+            timeData = graphData.map(item => item.average_time !== null ? parseFloat(item.average_time).toFixed(2) : null);
+        }
+        accuracyData = graphData.map(item => item.accuracy !== null ? parseFloat(item.accuracy).toFixed(1) : null);
 
-    if (accuracyData.some(a => a !== null)) {
-        new Chart(document.getElementById('accuracyChart'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Точность (%)',
-                    data: accuracyData,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
+
+        let timeChartLabel = 'Среднее время (сек)';
+        if (currentTestType === 'number_memorization') {
+            timeChartLabel = 'Макс. запомненная длина';
+        }
+
+        if (timeData.some(t => t !== null)) {
+            new Chart(document.getElementById('timeChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: timeChartLabel,
+                        data: timeData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Дата прохождения' }
+                        },
+                        y: {
+                             title: { display: true, text: timeChartLabel }
+                        }
+                    }
+                }
+            });
+        } else {
+            document.getElementById('timeChart').style.display = 'none';
+        }
+
+
+        if (accuracyData.some(a => a !== null)) {
+            new Chart(document.getElementById('accuracyChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Точность (%)',
+                        data: accuracyData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                 options: {
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Дата прохождения' }
+                        },
+                        y: {
+                             title: { display: true, text: 'Точность (%)' }
+                        }
+                    }
+                }
+            });
+        } else {
+             if(document.getElementById('accuracyChart')) {
+                document.getElementById('accuracyChart').style.display = 'none';
             }
-        });
+        }
+    } else {
+        if(document.getElementById('timeChart')) {
+            document.getElementById('timeChart').style.display = 'none';
+        }
+        if(document.getElementById('accuracyChart')) {
+            document.getElementById('accuracyChart').style.display = 'none';
+        }
     }
 </script>
 
