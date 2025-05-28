@@ -49,8 +49,7 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : '';
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+            <div class="collapse navbar-collapse" id="navbarNav">                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">Главная</a>
                     </li>
@@ -60,6 +59,24 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : '';
                     <li class="nav-item">
                         <a class="nav-link" href="/experts.php">Наши эксперты</a>
                     </li>
+                    <?php if ($isLoggedIn): ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="testsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Тестирование
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="testsDropdown">
+                                <li><a class="dropdown-item" href="/tests/index.php">
+                                    <i class="fas fa-play"></i> Пройти тесты
+                                </a></li>
+                                <li><a class="dropdown-item" href="/tests/my_results.php">
+                                    <i class="fas fa-chart-line"></i> Мои результаты
+                                </a></li>
+                                <li><a class="dropdown-item" href="/neurointerface.php">
+                                    <i class="fas fa-brain"></i> Нейроинтерфейс
+                                </a></li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
                     <!-- <li class="nav-item">
                         <a class="nav-link" href="/groups.php">Рабочие группы</a>
                     </li> -->
@@ -72,13 +89,26 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : '';
                         <div class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Личный кабинет
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            </a>                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="/cabinet.php">Профиль</a></li>
                                 <?php if ($userRole === 'admin'): ?>
                                     <li><a class="dropdown-item" href="/admin/index.php">Панель администратора</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/admin/lab7_criteria_management.php">
+                                        <i class="fas fa-cogs"></i> Управление критериями ПВК
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/admin/lab7_analytics.php">
+                                        <i class="fas fa-chart-line"></i> Аналитика Lab 7
+                                    </a></li>
                                 <?php elseif ($userRole === 'expert'): ?>
                                     <li><a class="dropdown-item" href="/expert/index.php">Панель эксперта</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/admin/lab7_criteria_management.php">
+                                        <i class="fas fa-cogs"></i> Управление критериями ПВК
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/tests/expert_results.php">
+                                        <i class="fas fa-users"></i> Результаты пользователей
+                                    </a></li>
                                 <?php elseif ($userRole === 'consultant'): ?>
                                     <li><a class="dropdown-item" href="/consultant/index.php">Панель консультанта</a></li>
                                 <?php endif; ?>

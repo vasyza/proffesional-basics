@@ -246,8 +246,31 @@ try {
             if ($completedTestsCountForBatch >= $totalTestsInBatch) {
                 $stmtUpdateInvitation = $pdo->prepare("UPDATE test_batches SET isFinished = TRUE WHERE id = ?");
                 $stmtUpdateInvitation->execute([$invitationId]);
+            }        }
+    }
+
+    // Автоматический расчет ПВК после сохранения результатов теста
+    try {
+        // Подключаем сервис оценки ПВК
+        require_once 'PvkAssessmentService.php';
+        $assessmentService = new PvkAssessmentService($pdo);
+        
+        // Получаем все профессии для текущего пользователя
+        $professionStmt = $pdo->query("SELECT id FROM professions ORDER BY id");
+        $professions = $professionStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        // Рассчитываем ПВК оценки для каждой профессии
+        foreach ($professions as $professionId) {
+            try {
+                $assessmentService->calculateAndSaveAssessment($userId, $professionId);
+            } catch (Exception $e) {
+                // Игнорируем ошибки расчета ПВК, чтобы не блокировать сохранение результатов
+                error_log("PVK assessment error for user $userId, profession $professionId: " . $e->getMessage());
             }
         }
+    } catch (Exception $e) {
+        // Игнорируем ошибки ПВК если сервис недоступен
+        error_log("PVK assessment service error: " . $e->getMessage());
     }
 
     $pdo->commit();

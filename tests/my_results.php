@@ -37,9 +37,7 @@ try {
         $stmt->bindParam(':type', $testType);
     }
     $stmt->execute();
-    $results = $stmt->fetchAll();
-
-    // Получение данных для графиков
+    $results = $stmt->fetchAll();    // Получение данных для графиков
     $graphData = [];
     if ($testType) {
         $graphQuery = "
@@ -53,6 +51,43 @@ try {
         $graphStmt->bindParam(':type', $testType);
         $graphStmt->execute();
         $graphData = $graphStmt->fetchAll();
+    }
+
+    // Получение PVK оценок пользователя
+    $pvkAssessments = [];
+    try {        $pvkQuery = "            SELECT 
+                upa.profession_id,
+                upa.pvk_id,
+                upa.assessment_score,
+                upa.assessment_level,
+                upa.last_calculated,
+                p.title as profession_name,
+                pq.name as pvk_name,
+                pq.description as pvk_description
+            FROM user_pvk_assessments upa
+            JOIN professions p ON upa.profession_id = p.id
+            JOIN professional_qualities pq ON upa.pvk_id = pq.id
+            WHERE upa.user_id = :user_id
+            ORDER BY upa.last_calculated DESC, p.title, pq.name
+        ";
+        $pvkStmt = $pdo->prepare($pvkQuery);
+        $pvkStmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $pvkStmt->execute();
+        $pvkData = $pvkStmt->fetchAll();
+        
+        // Группируем по профессиям
+        foreach ($pvkData as $assessment) {
+            $profId = $assessment['profession_id'];
+            if (!isset($pvkAssessments[$profId])) {
+                $pvkAssessments[$profId] = [
+                    'profession_name' => $assessment['profession_name'],
+                    'pvk_list' => []
+                ];
+            }
+            $pvkAssessments[$profId]['pvk_list'][] = $assessment;
+        }
+    } catch (PDOException $e) {
+        // Игнорируем ошибки PVK, если таблицы еще не созданы
     }
 
 } catch (PDOException $e) {
@@ -69,6 +104,59 @@ include '../includes/header.php';
 
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+
+    <!-- PVK Development Levels Section -->
+    <?php if (!empty($pvkAssessments)): ?>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">🎯 Уровни развития профессионально важных качеств (ПВК)</h5>
+            </div>
+            <div class="card-body">
+                <?php foreach ($pvkAssessments as $professionData): ?>
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-briefcase"></i> <?php echo htmlspecialchars($professionData['profession_name']); ?>
+                        </h6>
+                        <div class="row">
+                            <?php foreach ($professionData['pvk_list'] as $pvk): ?>
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card border-left-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-truncate" title="<?php echo htmlspecialchars($pvk['pvk_name']); ?>">
+                                                <?php echo htmlspecialchars($pvk['pvk_name']); ?>
+                                            </h6>                                            <div class="mb-2">
+                                                <span class="badge badge-lg 
+                                                    <?php 
+                                                    $level = $pvk['assessment_score'];
+                                                    if ($level >= 8) echo 'bg-success';
+                                                    elseif ($level >= 6) echo 'bg-warning';
+                                                    elseif ($level >= 4) echo 'bg-info';
+                                                    else echo 'bg-secondary';
+                                                    ?>">
+                                                    Уровень: <?php echo round($level, 1); ?>/10
+                                                </span>
+                                            </div>
+                                            <small class="text-muted">
+                                                Категория: <?php echo ucfirst($pvk['assessment_level']); ?><br>
+                                                <?php echo date('d.m.Y', strtotime($pvk['last_calculated'])); ?>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <div class="alert alert-info mt-3">
+                    <small>
+                        <i class="fas fa-info-circle"></i> 
+                        ПВК оценки рассчитываются на основе ваших результатов тестов и критериев, 
+                        настроенных экспертами для каждой профессии.
+                    </small>
+                </div>
+            </div>
+        </div>
     <?php endif; ?>
 
     <form class="mb-3" method="get">
